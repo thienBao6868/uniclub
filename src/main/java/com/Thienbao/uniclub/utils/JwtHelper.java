@@ -15,9 +15,9 @@ public class JwtHelper {
     @Value("${jwt.private-key}")
     private String key;
 
-    private long plusTime = 8 * 60 *60 *1000;
+    private long plusTime = 8 * 60 * 60 * 1000;
 
-    public String generateToken(String data){
+    public String generateToken(String data) {
 
         SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
         Date currentDate = new Date();
@@ -30,5 +30,20 @@ public class JwtHelper {
                 .signWith(secretKey)
                 .compact();
         return token;
-    };
+    }
+
+    ;
+
+    public boolean decodeToken(String token) {
+        boolean isSuccess = false;
+        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(key));
+
+        try {
+            Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
+            isSuccess = true;
+        } catch (Exception ex) {
+            System.out.println("Error decode token : " + ex.getMessage());
+        }
+        return isSuccess;
+    }
 }
