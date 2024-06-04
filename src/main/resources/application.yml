@@ -11,4 +11,4 @@ spring:
     password: bao123
     driver-class-name: com.mysql.cj.jdbc.Driver
 jwt:
-  private-key: BwI1vCFQv+jpMf9SDukFtZDNPPOEhLczr3eZREiwCig=
+  private-key: OO2dNrWwfX9kQHnyUwrVsdL3Qi0MgvYE/KW3aUDD5DU=

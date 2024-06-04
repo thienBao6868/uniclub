@@ -22,7 +22,7 @@ public class CustomFilterSecurity extends OncePerRequestFilter {
 
         String authorValue = request.getHeader("Authorization");
 
-        if(authorValue.startsWith("Bearer ") ){
+        if( authorValue != null && authorValue.startsWith("Bearer ") ){
             String token = authorValue.substring(7);
             if(!token.equals("")){
                 boolean check = jwtHelper.decodeToken(token);

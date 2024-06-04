@@ -36,13 +36,13 @@ public class JwtHelper {
 
     public boolean decodeToken(String token) {
         boolean isSuccess = false;
-        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64URL.decode(key));
+        SecretKey secretKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(key));
 
         try {
             Jwts.parser().verifyWith(secretKey).build().parseSignedClaims(token);
             isSuccess = true;
         } catch (Exception ex) {
-            System.out.println("Error decode token : " + ex.getMessage());
+            System.out.println("Error decode token " + ex.getMessage());
         }
         return isSuccess;
     }
