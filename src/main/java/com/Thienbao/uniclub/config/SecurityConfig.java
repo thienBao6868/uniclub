@@ -39,6 +39,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(author -> {
                     author.requestMatchers("/auth/**").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/product").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/product").hasRole("ADMIN");
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)

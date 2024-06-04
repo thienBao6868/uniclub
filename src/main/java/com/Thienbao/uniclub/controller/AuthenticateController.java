@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.controller;
 
+import com.Thienbao.uniclub.model.User;
 import com.Thienbao.uniclub.payload.request.SignupRequest;
 import com.Thienbao.uniclub.payload.response.BaseResponse;
 import com.Thienbao.uniclub.service.AuthService;
@@ -37,12 +38,21 @@ public class AuthenticateController {
 //        String key = Encoders.BASE64.encode(secretKey.getEncoded());
 //        System.out.println("Kiem tra " + key);
 
+        // Khi Login Lấy role của người dùng và gửi đến generateToken để mã hoá
+        // có 2 cách : truy vấn lại database để lấy role
+        // Lấy từ authenticationManager.authenticate(token);
+
         UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(email,password);
 
         authenticationManager.authenticate(token);
+
+        User user = authService.findByEmail(email);
+
+        String roleName = user.getRole().getName();
+
         // code chay khi dang nhap thanh cong
 
-        String jwtToken = jwtHelper.generateToken("Hello jwt");
+        String jwtToken = jwtHelper.generateToken(roleName);
 
         BaseResponse baseResponse = new BaseResponse();
 
