@@ -21,6 +21,9 @@ public class User {
     @Column(name="password")
     private String password;
 
-    @Column(name = "id_role")
-    private int idRole;
+//    @Column(name = "id_role")
+//    private int idRole;
+    @ManyToOne
+    @JoinColumn(name = "id_role")
+    private Role role;
 }

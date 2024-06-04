@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.config;
 
+import com.Thienbao.uniclub.filter.CustomFilterSecurity;
 import com.Thienbao.uniclub.security.CustomAuthenProvider;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -12,6 +13,7 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
@@ -31,13 +33,16 @@ public class SecurityConfig {
 
 
     @Bean
-    public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain filterChain(HttpSecurity http,CustomFilterSecurity customFilterSecurity) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(author -> {
                     author.requestMatchers("/auth/**").permitAll();
-                    author.requestMatchers(HttpMethod.POST,"/product").permitAll();
+                    author.requestMatchers(HttpMethod.GET,"/product").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/product").hasRole("ADMIN");
                     author.anyRequest().authenticated();
-                }).build();
+                })
+                .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
+                .build();
     };
 }

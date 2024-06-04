@@ -20,7 +20,7 @@ public class AuthService {
         User user = new User();
         user.setEmail(signupRequest.getEmail());
         user.setPassword(passwordEncoder.encode(signupRequest.getPassword()));
-        user.setIdRole(2);
+//        user.setIdRole(2);
         try{
             userRepository.save(user);
             isSuccess = true;
@@ -30,5 +30,9 @@ public class AuthService {
 
 
         return isSuccess;
+    }
+
+    public User findByEmail (String email){
+        return userRepository.findByEmail(email);
     }
 }
