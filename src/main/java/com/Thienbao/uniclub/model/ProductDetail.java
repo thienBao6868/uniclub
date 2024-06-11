@@ -18,15 +18,15 @@ public class ProductDetail {
     private double price;
 
     @ManyToOne
-    @JoinColumn(name = "id_product")
+    @JoinColumn(name = "id_product", insertable = false,updatable = false)
     private Product product;
 
     @ManyToOne
-    @JoinColumn(name = "id_size")
+    @JoinColumn(name = "id_size", insertable = false, updatable = false)
     private Size size;
 
     @ManyToOne
-    @JoinColumn(name = "id_color")
+    @JoinColumn(name = "id_color",insertable = false, updatable = false)
     private Color color;
 
 }
