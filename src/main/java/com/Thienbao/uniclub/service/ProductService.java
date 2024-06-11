@@ -1,15 +1,17 @@
 package com.Thienbao.uniclub.service;
 
 import com.Thienbao.uniclub.model.Product;
+import com.Thienbao.uniclub.model.ProductDetail;
 import com.Thienbao.uniclub.model.ProductImage;
+import com.Thienbao.uniclub.model.key.ProductDetailID;
 import com.Thienbao.uniclub.payload.request.InsertProductRequest;
+import com.Thienbao.uniclub.repository.ProductDetailRepository;
 import com.Thienbao.uniclub.service.imp.FileServiceImp;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
-import com.Thienbao.uniclub.userRepository.ProductImageRepository;
-import com.Thienbao.uniclub.userRepository.ProductRepository;
+import com.Thienbao.uniclub.repository.ProductImageRepository;
+import com.Thienbao.uniclub.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class ProductService implements ProductServiceImp {
@@ -22,6 +24,9 @@ public class ProductService implements ProductServiceImp {
 
     @Autowired
     private ProductImageRepository productImageRepository;
+
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
 
     @Override
     public boolean insertProduct(InsertProductRequest request) {
@@ -41,6 +46,17 @@ public class ProductService implements ProductServiceImp {
             // Save dữ liệu vào bảng product_image
             productImageRepository.save(productImage);
 
+            ProductDetailID productDetailID = new ProductDetailID();
+            productDetailID.setIdProduct(productSave.getId());
+            productDetailID.setIdSize(request.getIdSize());
+            productDetailID.setIdColor(request.getIdColor());
+
+            ProductDetail productDetail = new ProductDetail();
+            productDetail.setId(productDetailID);
+            productDetail.setQuantity(request.getQuantity());
+            productDetail.setPrice(request.getPrice());
+
+            productDetailRepository.save(productDetail);
         }
         return false;
     }
