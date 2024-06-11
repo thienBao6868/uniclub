@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.Objects;
 
 @Service
@@ -27,7 +28,7 @@ public class FileService implements FileServiceImp {
                 Files.createDirectory(root);
             }
             // User/thienbao/Document/upload/namefile
-            Files.copy(file.getInputStream(),root.resolve(Objects.requireNonNull(file.getOriginalFilename())));
+            Files.copy(file.getInputStream(),root.resolve(Objects.requireNonNull(file.getOriginalFilename())), StandardCopyOption.REPLACE_EXISTING);
             isSuccess = true;
         }catch (Exception ex){
             System.out.println("Error save file : " + ex.getMessage());
