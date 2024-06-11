@@ -12,7 +12,9 @@ import com.Thienbao.uniclub.repository.ProductImageRepository;
 import com.Thienbao.uniclub.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
+@Transactional
 @Service
 public class ProductService implements ProductServiceImp {
 

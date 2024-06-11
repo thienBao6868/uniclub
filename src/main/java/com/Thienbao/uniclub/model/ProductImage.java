@@ -13,6 +13,6 @@ public class ProductImage {
     private String name;
 
     @ManyToOne
-    @JoinColumn(name = "id_peoduct")
+    @JoinColumn(name = "id_product")
     private Product product;
 }
