@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.service;
 
+import com.Thienbao.uniclub.exception.SaveFileException;
 import com.Thienbao.uniclub.service.imp.FileServiceImp;
 import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
@@ -21,7 +22,7 @@ public class FileService implements FileServiceImp {
 
     @Override
     public boolean saveFile(MultipartFile file) {
-        boolean isSuccess = false;
+
         try{
             Path root = Paths.get(pathSaveFile);
             if (!Files.exists(root)){
@@ -29,10 +30,10 @@ public class FileService implements FileServiceImp {
             }
             // User/thienbao/Document/upload/namefile
             Files.copy(file.getInputStream(),root.resolve(Objects.requireNonNull(file.getOriginalFilename())), StandardCopyOption.REPLACE_EXISTING);
-            isSuccess = true;
+            return true;
         }catch (Exception ex){
-            System.out.println("Error save file : " + ex.getMessage());
+          throw  new SaveFileException(ex.getMessage());
         }
-        return isSuccess;
+
     }
 }
