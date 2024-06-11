@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.service;
 
+import com.Thienbao.uniclub.payload.request.InsertProductRequest;
 import com.Thienbao.uniclub.service.imp.FileServiceImp;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,9 +14,9 @@ public class ProductService implements ProductServiceImp {
     private FileServiceImp fileServiceImp;
 
     @Override
-    public boolean insertProduct(MultipartFile file) {
+    public boolean insertProduct(InsertProductRequest request) {
 
-        fileServiceImp.saveFile(file);
+        fileServiceImp.saveFile(request.getFile());
         return false;
     }
 }

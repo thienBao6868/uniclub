@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.controller;
 
+import com.Thienbao.uniclub.payload.request.InsertProductRequest;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -19,9 +20,9 @@ public class ProductController {
         return new ResponseEntity<>("Hello all product", HttpStatus.OK);
     }
     @PostMapping("")
-    public ResponseEntity<?> insertProducts(@RequestParam MultipartFile file){
+    public ResponseEntity<?> insertProducts(InsertProductRequest request){
 
-        productServiceImp.insertProduct(file);
+        productServiceImp.insertProduct(request);
 
         return  new ResponseEntity<>("insert product", HttpStatus.OK);
     }
