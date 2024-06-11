@@ -12,3 +12,6 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
 jwt:
   private-key: OO2dNrWwfX9kQHnyUwrVsdL3Qi0MgvYE/KW3aUDD5DU=
+
+path:
+  save-file: /Users/thienbao/Documents/upload
