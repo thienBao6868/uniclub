@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.service;
 
+import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.payload.request.CartRequest;
 import com.Thienbao.uniclub.repository.CartRepository;
 import com.Thienbao.uniclub.service.imp.CartServiceImp;
@@ -18,9 +19,31 @@ public class CartService implements CartServiceImp {
     private CartRepository cartRepository;
     @Override
     public boolean insertCart(HttpServletRequest request, CartRequest cartRequest) {
-        int userId = jwtHelper.getIdUserFromToken(request);
+        try{
+            int idUser = jwtHelper.getIdUserFromToken(request);
+            User user = new User();
+            user.setId(idUser);
 
+            Product product = new Product();
+            product.setId(cartRequest.getIdProduct());
 
-        return false;
+            Size size = new Size();
+            size.setId(cartRequest.getIdSize());
+
+            Color color = new Color();
+            color.setId(cartRequest.getIdColor());
+
+            Cart cart = new Cart();
+            cart.setUser(user);
+            cart.setProduct(product);
+            cart.setSize(size);
+            cart.setColor(color);
+            cart.setQuantity(cartRequest.getQuantity());
+
+            cartRepository.save(cart);
+            return true;
+        }catch (Exception ex){
+            throw new RuntimeException("Error Insert Cart : " + ex.getMessage());
+        }
     }
 }
