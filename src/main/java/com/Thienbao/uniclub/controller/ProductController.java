@@ -17,7 +17,7 @@ public class ProductController {
     private ProductServiceImp productServiceImp;
     @GetMapping("")
     public ResponseEntity<?> getAllProduct(){
-        return new ResponseEntity<>("Hello all product", HttpStatus.OK);
+        return new ResponseEntity<>(productServiceImp.getAll(), HttpStatus.OK);
     }
     @PostMapping("")
     public ResponseEntity<?> insertProducts(InsertProductRequest request){

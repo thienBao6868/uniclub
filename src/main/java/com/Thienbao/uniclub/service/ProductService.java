@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.service;
 
+import com.Thienbao.uniclub.dto.ProductDto;
 import com.Thienbao.uniclub.exception.InsertProductException;
 import com.Thienbao.uniclub.exception.SaveFileException;
 import com.Thienbao.uniclub.model.Product;
@@ -15,6 +16,9 @@ import com.Thienbao.uniclub.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Transactional
 @Service
@@ -71,5 +75,24 @@ public class ProductService implements ProductServiceImp {
         }
 
         return false;
+    }
+
+    @Override
+    public List<ProductDto> getAll() {
+        List<Product> productList = productRepository.findAll();
+        List<ProductDto> productDtoList = new ArrayList<>();
+
+        productList.forEach(item->{
+            ProductDto productDto = new ProductDto();
+            productDto.setName(item.getName());
+            productDto.setPrice(item.getPrice());
+            List<String> images = new ArrayList<>();
+            item.getProductImages().forEach(itemImage ->{
+                images.add("http://localhost:8080/file/"+ itemImage.getName());
+            });
+            productDto.setImage(images);
+            productDtoList.add(productDto);
+        });
+     return productDtoList;
     }
 }
