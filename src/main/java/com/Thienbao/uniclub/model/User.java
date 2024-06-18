@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.List;
+
 @Entity(name = "users")
 @Data
 @NoArgsConstructor
@@ -26,4 +28,7 @@ public class User {
     @ManyToOne
     @JoinColumn(name = "id_role")
     private Role role;
+
+    @OneToMany(mappedBy = "user")
+    private List<Cart>  carts;
 }

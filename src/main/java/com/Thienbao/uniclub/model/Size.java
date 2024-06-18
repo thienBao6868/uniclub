@@ -18,4 +18,7 @@ public class Size {
 
     @OneToMany(mappedBy = "size")
     private List<ProductDetail> productDetails;
+
+    @OneToMany(mappedBy = "size")
+    private List<Cart> carts;
 }
