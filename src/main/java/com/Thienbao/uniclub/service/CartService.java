@@ -40,7 +40,16 @@ public class CartService implements CartServiceImp {
             cart.setColor(color);
             cart.setQuantity(cartRequest.getQuantity());
 
-            cartRepository.save(cart);
+
+
+            Cart cartExist = cartRepository.findByUserIdAndProductIdAndColorIdAndSizeId(idUser,cartRequest.getIdProduct(), cartRequest.getIdColor(), cartRequest.getIdSize());
+            if(cartExist != null){
+                int oldQuantity = cartExist.getQuantity();
+                cartExist.setQuantity(oldQuantity+ cartRequest.getQuantity());
+                cartRepository.save(cartExist);
+            }else{
+                cartRepository.save(cart);
+            }
             return true;
         }catch (Exception ex){
             throw new RuntimeException("Error Insert Cart : " + ex.getMessage());
