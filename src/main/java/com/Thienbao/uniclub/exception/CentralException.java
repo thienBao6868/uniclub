@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 @RestControllerAdvice
 public class CentralException {
 
-    @ExceptionHandler({RuntimeException.class, InsertProductException.class, SaveFileException.class})
+    @ExceptionHandler({RuntimeException.class, InsertProductException.class, SaveFileException.class, FileNotFoundException.class})
     public ResponseEntity handleException(Exception e){
         BaseResponse baseResponse = new BaseResponse();
         baseResponse.setStatusCode(500);

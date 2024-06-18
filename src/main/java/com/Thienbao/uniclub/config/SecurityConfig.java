@@ -37,7 +37,7 @@ public class SecurityConfig {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(author -> {
-                    author.requestMatchers("/auth/**").permitAll();
+                    author.requestMatchers("/auth/**","/file/**").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/product").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/product").hasRole("ADMIN");
                     author.anyRequest().authenticated();
