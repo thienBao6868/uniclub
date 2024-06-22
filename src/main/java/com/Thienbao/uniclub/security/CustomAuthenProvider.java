@@ -1,7 +1,7 @@
 package com.Thienbao.uniclub.security;
 
 import com.Thienbao.uniclub.model.User;
-import com.Thienbao.uniclub.userRepository.UserRepository;
+import com.Thienbao.uniclub.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

@@ -52,7 +52,7 @@ public class AuthenticateController {
 
         // code chay khi dang nhap thanh cong
 
-        String jwtToken = jwtHelper.generateToken(roleName);
+        String jwtToken = jwtHelper.generateToken(user.getId(),roleName);
 
         BaseResponse baseResponse = new BaseResponse();
 
@@ -64,7 +64,6 @@ public class AuthenticateController {
     };
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid  SignupRequest signupRequest){
-
         return new ResponseEntity<>(authService.insertUser(signupRequest), HttpStatus.OK);
     };
 

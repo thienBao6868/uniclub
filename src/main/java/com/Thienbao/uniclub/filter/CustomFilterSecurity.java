@@ -32,9 +32,9 @@ public class CustomFilterSecurity extends OncePerRequestFilter {
 
         if( authorValue != null && authorValue.startsWith("Bearer ") ){
             String token = authorValue.substring(7);
-            if(!token.equals("")){
+            if(!token.isEmpty()){
                 String roleName = jwtHelper.decodeToken(token);
-                if(!roleName.equals("")){
+                if(!roleName.isEmpty()){
                     List<GrantedAuthority> roleList = new ArrayList<>();
                     SimpleGrantedAuthority role = new SimpleGrantedAuthority(roleName);
 
@@ -47,9 +47,6 @@ public class CustomFilterSecurity extends OncePerRequestFilter {
                 }
             }
         }
-
-
-
         filterChain.doFilter(request,response);
     }
 }
