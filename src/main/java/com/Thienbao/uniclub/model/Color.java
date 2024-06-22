@@ -22,4 +22,7 @@ public class Color {
     @OneToMany(mappedBy = "color")
     private List<Cart> carts;
 
+    @OneToMany(mappedBy = "color")
+    private List<OrderDetail> orderDetailList;
+
 }

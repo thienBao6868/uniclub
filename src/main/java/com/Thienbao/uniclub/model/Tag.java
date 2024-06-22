@@ -5,9 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "tag")
 @Data
-public class Size {
+public class Tag {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,12 +16,6 @@ public class Size {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "size")
-    private List<ProductDetail> productDetails;
-
-    @OneToMany(mappedBy = "size")
-    private List<Cart> carts;
-
-    @OneToMany(mappedBy = "size")
-    private List<OrderDetail> orderDetailList;
+    @OneToMany(mappedBy = "tag")
+    private List<TagProduct> tagProductList;
 }

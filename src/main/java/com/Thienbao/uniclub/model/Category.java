@@ -5,10 +5,9 @@ import lombok.Data;
 
 import java.util.List;
 
-@Entity
+@Entity(name = "category")
 @Data
-public class Size {
-
+public class Category {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
@@ -16,12 +15,9 @@ public class Size {
     @Column(name = "name")
     private String name;
 
-    @OneToMany(mappedBy = "size")
-    private List<ProductDetail> productDetails;
+    @Column(name = "image")
+    private String image;
 
-    @OneToMany(mappedBy = "size")
-    private List<Cart> carts;
-
-    @OneToMany(mappedBy = "size")
-    private List<OrderDetail> orderDetailList;
+    @OneToMany(mappedBy = "category")
+    private List<CategoryProduct> categoryProductList;
 }
