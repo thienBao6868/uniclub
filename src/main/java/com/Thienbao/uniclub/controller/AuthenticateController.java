@@ -64,7 +64,6 @@ public class AuthenticateController {
     };
     @PostMapping("/signup")
     public ResponseEntity<?> signUp(@Valid  SignupRequest signupRequest){
-
         return new ResponseEntity<>(authService.insertUser(signupRequest), HttpStatus.OK);
     };
 
