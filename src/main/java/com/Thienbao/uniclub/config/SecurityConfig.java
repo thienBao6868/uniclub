@@ -53,7 +53,7 @@ public class SecurityConfig {
     public SecurityFilterChain filterChain(HttpSecurity http,CustomFilterSecurity customFilterSecurity, CorsConfigurationSource corsConfigurationSource) throws Exception {
         return http
                 .csrf(AbstractHttpConfigurer::disable)
-//                .cors(cors ->cors.configurationSource(corsConfigurationSource))
+                .cors(cors ->cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(author -> {
                     author.requestMatchers("/auth/**","/file/**").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/product").permitAll();
