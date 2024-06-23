@@ -1,6 +1,7 @@
 package com.Thienbao.uniclub.controller;
 
 import com.Thienbao.uniclub.payload.request.InsertProductRequest;
+import com.Thienbao.uniclub.payload.response.BaseResponse;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,5 +25,14 @@ public class ProductController {
         productServiceImp.insertProduct(request);
         return  new ResponseEntity<>("insert product", HttpStatus.OK);
     }
+
+    // Get Product detail
+
+    @GetMapping("/{idProduct}")
+    public ResponseEntity<?> getDetailProduct(@PathVariable int idProduct){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get detail Product success", productServiceImp.getDetailProduct(idProduct));
+        return new ResponseEntity<>(baseResponse,HttpStatus.OK);
+    }
+
 
 }

@@ -2,8 +2,10 @@ package com.Thienbao.uniclub.model;
 
 import com.Thienbao.uniclub.model.key.TagProductID;
 import jakarta.persistence.*;
+import lombok.Data;
 
 @Entity(name = "tag_product")
+@Data
 public class TagProduct {
 
     @EmbeddedId

@@ -1,8 +1,11 @@
 package com.Thienbao.uniclub.service;
 
+import com.Thienbao.uniclub.dto.DetailProductDto;
 import com.Thienbao.uniclub.dto.ProductDto;
 import com.Thienbao.uniclub.exception.InsertProductException;
+import com.Thienbao.uniclub.exception.NotFoundException;
 import com.Thienbao.uniclub.exception.SaveFileException;
+import com.Thienbao.uniclub.map.ProductMapper;
 import com.Thienbao.uniclub.model.Product;
 import com.Thienbao.uniclub.model.ProductDetail;
 import com.Thienbao.uniclub.model.ProductImage;
@@ -35,6 +38,9 @@ public class ProductService implements ProductServiceImp {
 
     @Autowired
     private ProductDetailRepository productDetailRepository;
+
+    @Autowired
+    private ProductMapper productMapper;
 
     @Override
     public boolean insertProduct(InsertProductRequest request) {
@@ -94,5 +100,11 @@ public class ProductService implements ProductServiceImp {
             productDtoList.add(productDto);
         });
      return productDtoList;
+    }
+
+    @Override
+    public DetailProductDto getDetailProduct(int idProduct) {
+        Product product = productRepository.findById(idProduct).orElseThrow(() -> new NotFoundException("Not found product with id :" + idProduct));
+        return  productMapper.convertToDetailProductDto(product);
     }
 }
