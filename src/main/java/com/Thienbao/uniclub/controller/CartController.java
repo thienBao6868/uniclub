@@ -7,10 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/cart")
@@ -25,4 +22,10 @@ public class CartController {
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Insert Cart Successful", isSuccess);
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
+    @GetMapping("")
+    public ResponseEntity<?> getCarts(HttpServletRequest request){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get carts successful", cartServiceImp.getCarts(request));
+        return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+
 }
