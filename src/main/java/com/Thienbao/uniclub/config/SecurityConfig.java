@@ -55,9 +55,10 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors ->cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(author -> {
-                    author.requestMatchers("/auth/**","/file/**","/category/**").permitAll();
+                    author.requestMatchers("/auth/**","/file/**","/category/all").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/product").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/product").hasRole("ADMIN");
+                    author.requestMatchers(HttpMethod.POST,"/category").hasRole("ADMIN");
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
