@@ -21,9 +21,8 @@ public class ProductController {
     }
     @PostMapping("")
     public ResponseEntity<?> insertProducts(InsertProductRequest request){
-
         productServiceImp.insertProduct(request);
-
         return  new ResponseEntity<>("insert product", HttpStatus.OK);
     }
+
 }

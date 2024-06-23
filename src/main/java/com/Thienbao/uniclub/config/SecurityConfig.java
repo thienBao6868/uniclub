@@ -55,7 +55,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .cors(cors ->cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(author -> {
-                    author.requestMatchers("/auth/**","/file/**").permitAll();
+                    author.requestMatchers("/auth/**","/file/**","/category/**").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/product").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/product").hasRole("ADMIN");
                     author.anyRequest().authenticated();
