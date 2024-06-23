@@ -1,6 +1,7 @@
 package com.Thienbao.uniclub.service;
 
 import com.Thienbao.uniclub.dto.CategoryDto;
+import com.Thienbao.uniclub.exception.AlreadyExistException;
 import com.Thienbao.uniclub.exception.InsertCategoryException;
 import com.Thienbao.uniclub.exception.SaveFileException;
 import com.Thienbao.uniclub.model.Category;
@@ -39,6 +40,8 @@ public class CategoryService implements CategoryServiceImp {
 
     @Override
     public boolean insertCategory(InsertCategoryRequest insertCategoryRequest) {
+
+        if (categoryRepository.findByName(insertCategoryRequest.getName()) != null) throw new AlreadyExistException("Category already exist");
         try{
             boolean isCopySuccess = fileServiceImp.saveFile(insertCategoryRequest.getFile());
             if(isCopySuccess){
