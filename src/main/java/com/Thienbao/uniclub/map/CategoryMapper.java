@@ -10,7 +10,7 @@ public class CategoryMapper {
       CategoryDto categoryDto = new CategoryDto();
       categoryDto.setId(category.getId());
       categoryDto.setName(category.getName());
-      categoryDto.setImage(category.getImage());
+      categoryDto.setImage("http://localhost:8080/file/"+category.getImage());
       return categoryDto;
   }
 }

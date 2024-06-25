@@ -58,7 +58,7 @@ public class SecurityConfig {
                     author.requestMatchers("/auth/**","/file/**","/category/all","/tag/all").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/product").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/product").hasRole("ADMIN");
-                    author.requestMatchers(HttpMethod.POST,"/category").hasRole("ADMIN");
+                    author.requestMatchers(HttpMethod.POST,"/category","/tag").hasRole("ADMIN");
                     author.requestMatchers(HttpMethod.PUT,"/product/update").hasRole("ADMIN");
                     author.anyRequest().authenticated();
                 })
