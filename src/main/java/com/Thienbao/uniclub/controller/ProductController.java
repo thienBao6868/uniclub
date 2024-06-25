@@ -3,6 +3,7 @@ package com.Thienbao.uniclub.controller;
 import com.Thienbao.uniclub.payload.request.InsertProductRequest;
 import com.Thienbao.uniclub.payload.response.BaseResponse;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -21,7 +22,7 @@ public class ProductController {
         return new ResponseEntity<>(productServiceImp.getAll(), HttpStatus.OK);
     }
     @PostMapping("")
-    public ResponseEntity<?> insertProducts(InsertProductRequest request){
+    public ResponseEntity<?> insertProducts(@Valid InsertProductRequest request){
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Insert Product success",productServiceImp.insertProduct(request));
         return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
