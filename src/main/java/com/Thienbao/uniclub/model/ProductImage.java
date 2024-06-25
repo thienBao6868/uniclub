@@ -15,4 +15,8 @@ public class ProductImage {
     @ManyToOne
     @JoinColumn(name = "id_product")
     private Product product;
+
+    @ManyToOne
+    @JoinColumn(name = "id_color")
+    private Color color;
 }

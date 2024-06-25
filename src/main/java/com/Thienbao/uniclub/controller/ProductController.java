@@ -32,6 +32,7 @@ public class ProductController {
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get detail Product success", productServiceImp.getDetailProduct(idProduct));
         return new ResponseEntity<>(baseResponse,HttpStatus.OK);
     }
+
     // update Product
     @PutMapping("/update")
     public ResponseEntity<?> updateProduct(){

@@ -25,4 +25,7 @@ public class Color {
     @OneToMany(mappedBy = "color")
     private List<OrderDetail> orderDetailList;
 
+    @OneToMany(mappedBy = "color")
+    private List<ProductImage> productImageList;
+
 }

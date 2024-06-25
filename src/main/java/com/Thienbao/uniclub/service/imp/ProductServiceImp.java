@@ -9,6 +9,5 @@ import java.util.List;
 public interface ProductServiceImp {
     boolean insertProduct(InsertProductRequest request);
     List<ProductDto> getAll();
-
     DetailProductDto getDetailProduct(int idProduct);
 }
