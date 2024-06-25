@@ -22,18 +22,22 @@ public class ProductController {
     }
     @PostMapping("")
     public ResponseEntity<?> insertProducts(InsertProductRequest request){
-        productServiceImp.insertProduct(request);
-        return  new ResponseEntity<>("insert product", HttpStatus.OK);
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Insert Product success",productServiceImp.insertProduct(request));
+        return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
-
     // Get Product detail
-
     @GetMapping("/{idProduct}")
     public ResponseEntity<?> getDetailProduct(@PathVariable int idProduct){
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get detail Product success", productServiceImp.getDetailProduct(idProduct));
         return new ResponseEntity<>(baseResponse,HttpStatus.OK);
     }
     // update Product
+    @PutMapping("/update")
+    public ResponseEntity<?> updateProduct(){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "update Product Success", null);
+        return new ResponseEntity<>(baseResponse,HttpStatus.OK);
+    }
+
     // delete Product
 
 }

@@ -59,6 +59,7 @@ public class SecurityConfig {
                     author.requestMatchers(HttpMethod.GET,"/product").permitAll();
                     author.requestMatchers(HttpMethod.POST,"/product").hasRole("ADMIN");
                     author.requestMatchers(HttpMethod.POST,"/category").hasRole("ADMIN");
+                    author.requestMatchers(HttpMethod.PUT,"/product/update").hasRole("ADMIN");
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
