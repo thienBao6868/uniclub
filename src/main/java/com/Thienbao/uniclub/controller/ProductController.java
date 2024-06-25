@@ -21,19 +21,22 @@ public class ProductController {
     public ResponseEntity<?> getAllProduct(){
         return new ResponseEntity<>(productServiceImp.getAll(), HttpStatus.OK);
     }
+
+    // Custom insert Product - Don't
     @PostMapping("")
     public ResponseEntity<?> insertProducts(@Valid InsertProductRequest request){
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Insert Product success",productServiceImp.insertProduct(request));
         return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
     // Get Product detail
+    // Custom product detail - Don't
     @GetMapping("/{idProduct}")
     public ResponseEntity<?> getDetailProduct(@PathVariable int idProduct){
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get detail Product success", productServiceImp.getDetailProduct(idProduct));
         return new ResponseEntity<>(baseResponse,HttpStatus.OK);
     }
 
-    // update Product
+    // update Product - Don't (update - name, price,description, sku)
     @PutMapping("/update")
     public ResponseEntity<?> updateProduct(){
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "update Product Success", null);
