@@ -31,7 +31,7 @@ public class CategoryController {
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "insert category success",categoryServiceImp.insertCategory(insertCategoryRequest));
         return new ResponseEntity<>(baseResponse,HttpStatus.OK);
     }
-    // Update category
-    // Delete category
+    // update category
+    // delete category
 
 }

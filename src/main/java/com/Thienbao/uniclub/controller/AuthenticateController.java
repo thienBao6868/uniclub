@@ -67,5 +67,7 @@ public class AuthenticateController {
         return new ResponseEntity<>(authService.insertUser(signupRequest), HttpStatus.OK);
     };
 
+    // Logout
+
 
 }

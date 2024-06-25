@@ -1,5 +1,7 @@
 package com.Thienbao.uniclub.service;
 
+import com.Thienbao.uniclub.exception.InsertOrderException;
+import com.Thienbao.uniclub.exception.NotFoundException;
 import com.Thienbao.uniclub.model.Cart;
 import com.Thienbao.uniclub.model.OrderDetail;
 import com.Thienbao.uniclub.model.Orders;
@@ -16,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Service
@@ -36,33 +39,45 @@ public class OrderService implements OrderServiceImp {
     @Transactional
     @Override
     public boolean insertOrder(HttpServletRequest request, OrderRequest orderRequest) {
-        int idUser = jwtHelper.getIdUserFromToken(request);
-        Orders order = new Orders();
-        order.setPhone(orderRequest.getPhone());
-        order.setAddress(orderRequest.getAddress());
-        order.setTotal(orderRequest.getTotal());
-        User user = new User();
-        user.setId(idUser);
-        order.setUser(user);
-        orderRepository.save(order);
 
-        List<Cart> carts = cartRepository.findByUserId(idUser);
-        carts.forEach(item->{
-            OrderDetail orderDetail = new OrderDetail();
-            OrderDetailID orderDetailID = new OrderDetailID();
-            orderDetailID.setIdOrder(order.getId());
-            orderDetailID.setIdProduct(item.getProduct().getId());
-            orderDetailID.setIdColor(item.getColor().getId());
-            orderDetailID.setIdSize(item.getSize().getId());
+        try{
+            int idUser = jwtHelper.getIdUserFromToken(request);
+            Orders order = new Orders();
+            order.setPhone(orderRequest.getPhone());
+            order.setAddress(orderRequest.getAddress());
+            order.setTotal(orderRequest.getTotal());
+            order.setCreateDate(LocalDateTime.now());
+            order.setStatus("Pending");
+            User user = new User();
+            user.setId(idUser);
+            order.setUser(user);
+            orderRepository.save(order);
 
-            orderDetail.setOrderDetailID(orderDetailID);
-            orderDetail.setPrice(item.getProduct().getPrice());
-            orderDetail.setQuantity(item.getQuantity());
-            orderDetailRepository.save(orderDetail);
+            List<Cart> carts = cartRepository.findByUserId(idUser);
+            if(carts.isEmpty()) throw new NotFoundException("User needs to add products to cart");
+            carts.forEach(item->{
+                OrderDetail orderDetail = new OrderDetail();
+                OrderDetailID orderDetailID = new OrderDetailID();
+                orderDetailID.setIdOrder(order.getId());
+                orderDetailID.setIdProduct(item.getProduct().getId());
+                orderDetailID.setIdColor(item.getColor().getId());
+                orderDetailID.setIdSize(item.getSize().getId());
 
-            // Delete Data in Cart Database.
-        });
+                orderDetail.setOrderDetailID(orderDetailID);
+                orderDetail.setPrice(item.getProduct().getPrice());
+                orderDetail.setQuantity(item.getQuantity());
+                orderDetailRepository.save(orderDetail);
 
-        return false;
-    }
+                // Delete Data in Cart Database.
+                cartRepository.delete(item);
+            });
+
+            return true;
+        }catch (Exception ex){
+            throw new InsertOrderException("Error insert Order: " + ex.getMessage());
+        }
+
+    };
+
+
 }
