@@ -32,7 +32,7 @@ public class ProductMapper {
         List<ProductDetailDto> productDetailDtoList = new ArrayList<>();
 
         productDetailList.forEach(item ->{
-            productDetailDtoList.add(productDetailMapper.convertToProductDetailDto(item));
+            productDetailDtoList.add(productDetailMapper.convertToProductDetailDto(item,product.getId()));
         });
         detailProductDto.setProductDetailList(productDetailDtoList);
 

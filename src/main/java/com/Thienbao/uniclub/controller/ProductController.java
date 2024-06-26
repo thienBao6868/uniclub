@@ -22,14 +22,13 @@ public class ProductController {
         return new ResponseEntity<>(productServiceImp.getAll(), HttpStatus.OK);
     }
 
-    // Custom insert Product - Don't
+
     @PostMapping("")
     public ResponseEntity<?> insertProducts(@Valid InsertProductRequest request){
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Insert Product success",productServiceImp.insertProduct(request));
         return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
     // Get Product detail
-    // Custom product detail - Don't
     @GetMapping("/{idProduct}")
     public ResponseEntity<?> getDetailProduct(@PathVariable int idProduct){
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get detail Product success", productServiceImp.getDetailProduct(idProduct));
