@@ -23,6 +23,9 @@ public class User {
     @Column(name="password")
     private String password;
 
+    @Column(name = "is_deleted", columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean isDeleted;
+
     @ManyToOne
     @JoinColumn(name = "id_role")
     private Role role;
@@ -32,4 +35,11 @@ public class User {
 
     @OneToMany(mappedBy = "user")
     private List<Orders> ordersList;
+
+    @PrePersist
+    protected void prePersist() {
+        if (this.isDeleted == null) {
+            this.isDeleted = false;
+        }
+    }
 }

@@ -1,8 +1,11 @@
 package com.Thienbao.uniclub.service;
 
+import com.Thienbao.uniclub.dto.DetailProductDto;
 import com.Thienbao.uniclub.dto.ProductDto;
 import com.Thienbao.uniclub.exception.InsertProductException;
+import com.Thienbao.uniclub.exception.NotFoundException;
 import com.Thienbao.uniclub.exception.SaveFileException;
+import com.Thienbao.uniclub.map.ProductMapper;
 import com.Thienbao.uniclub.model.Product;
 import com.Thienbao.uniclub.model.ProductDetail;
 import com.Thienbao.uniclub.model.ProductImage;
@@ -16,6 +19,7 @@ import com.Thienbao.uniclub.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -36,45 +40,62 @@ public class ProductService implements ProductServiceImp {
     @Autowired
     private ProductDetailRepository productDetailRepository;
 
+    @Autowired
+    private ProductMapper productMapper;
+
     @Override
     public boolean insertProduct(InsertProductRequest request) {
 
+        try {
+            // Save [] file
+            MultipartFile[] listImageFile = request.getFiles();
+            if (listImageFile.length != 0) {
+                for (MultipartFile file : listImageFile) {
+                    fileServiceImp.saveFile(file);
+                }
+            } else {
+                throw new SaveFileException("Not found any file");
+            }
+        } catch (Exception ex) {
+            throw new SaveFileException("Error save files");
+        }
 
-        try{
-            boolean isCopySuccess = fileServiceImp.saveFile(request.getFile());
-            if(isCopySuccess){
-                Product product = new Product();
-                product.setDesc(request.getDesc());
-                product.setName(request.getName());
-                product.setPrice(request.getPrice());
-                // Hàm save sẽ trả về entity Có dữ liệu id của product vừa mới thêm vào
-                Product productSave =  productRepository.save(product);
+        try {
+            Product product = new Product();
+            product.setDesc(request.getDesc());
+            product.setName(request.getName());
+            product.setPrice(request.getPrice());
+            // Hàm save sẽ trả về entity Có dữ liệu id của product vừa mới thêm vào
+            Product productSave = productRepository.save(product);
 
+            // Xử lý khi save một List file image
+            for(MultipartFile file: request.getFiles()){
+                // Xử lý save 1 image
                 ProductImage productImage = new ProductImage();
-                productImage.setName(request.getFile().getOriginalFilename());
+                productImage.setName(file.getOriginalFilename());
                 productImage.setProduct(productSave);
                 // Save dữ liệu vào bảng product_image
                 productImageRepository.save(productImage);
-
-                ProductDetailID productDetailID = new ProductDetailID();
-                productDetailID.setIdProduct(productSave.getId());
-                productDetailID.setIdSize(request.getIdSize());
-                productDetailID.setIdColor(request.getIdColor());
-
-                ProductDetail productDetail = new ProductDetail();
-                productDetail.setId(productDetailID);
-                productDetail.setQuantity(request.getQuantity());
-                productDetail.setPrice(request.getPrice());
-
-                productDetailRepository.save(productDetail);
-            }else {
-                throw new SaveFileException();
             }
-        }catch (Exception ex){
-            throw  new InsertProductException(ex.getMessage());
+
+
+            ProductDetailID productDetailID = new ProductDetailID();
+            productDetailID.setIdProduct(productSave.getId());
+            productDetailID.setIdSize(request.getIdSize());
+            productDetailID.setIdColor(request.getIdColor());
+
+            ProductDetail productDetail = new ProductDetail();
+            productDetail.setId(productDetailID);
+            productDetail.setQuantity(request.getQuantity());
+            productDetail.setPrice(request.getPrice());
+
+            productDetailRepository.save(productDetail);
+            return true;
+        } catch (Exception ex) {
+            throw new InsertProductException(ex.getMessage());
         }
 
-        return false;
+
     }
 
     @Override
@@ -82,17 +103,25 @@ public class ProductService implements ProductServiceImp {
         List<Product> productList = productRepository.findAll();
         List<ProductDto> productDtoList = new ArrayList<>();
 
-        productList.forEach(item->{
+        productList.forEach(item -> {
             ProductDto productDto = new ProductDto();
             productDto.setName(item.getName());
             productDto.setPrice(item.getPrice());
             List<String> images = new ArrayList<>();
-            item.getProductImages().forEach(itemImage ->{
-                images.add("http://localhost:8080/file/"+ itemImage.getName());
+            item.getProductImages().forEach(itemImage -> {
+                images.add("http://localhost:8080/file/" + itemImage.getName());
             });
             productDto.setImage(images);
             productDtoList.add(productDto);
         });
-     return productDtoList;
+        return productDtoList;
     }
+
+    @Override
+    public DetailProductDto getDetailProduct(int idProduct) {
+        Product product = productRepository.findById(idProduct).orElseThrow(() -> new NotFoundException("Not found product with id :" + idProduct));
+        return productMapper.convertToDetailProductDto(product);
+    }
+
+
 }
