@@ -59,7 +59,7 @@ public class SecurityConfig {
                     author.requestMatchers(HttpMethod.POST,"/category","/tag").hasRole("ADMIN");
                     author.requestMatchers(HttpMethod.PUT,"/product/update").hasRole("ADMIN");
                     author.requestMatchers("/auth/**","/file/**").permitAll();
-                    author.requestMatchers(HttpMethod.GET,"/product","/category/all","/tag/all","/color/all").permitAll();
+                    author.requestMatchers(HttpMethod.GET,"/product","/category/all","/tag/all","/color/all","/size/all").permitAll();
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)
