@@ -14,13 +14,18 @@ import com.Thienbao.uniclub.payload.request.InsertProductRequest;
 import com.Thienbao.uniclub.repository.*;
 import com.Thienbao.uniclub.service.imp.FileServiceImp;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 @Transactional
 @Service
@@ -46,6 +51,9 @@ public class ProductService implements ProductServiceImp {
 
     @Autowired
     private ProductMapper productMapper;
+
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @Override
     public boolean insertProduct(InsertProductRequest request) {
@@ -123,23 +131,38 @@ public class ProductService implements ProductServiceImp {
 
     }
 
+
     @Override
     public List<ProductDto> getAll() {
-        List<Product> productList = productRepository.findAll();
         List<ProductDto> productDtoList = new ArrayList<>();
+        Gson gson = new Gson();
+        if(redisTemplate.hasKey("products")){
+            String dataProductsCached = (Objects.requireNonNull(redisTemplate.opsForValue().get("products"))).toString();
+            Type productListType = new TypeToken<ArrayList<ProductDto>>(){}.getType();
+            productDtoList = gson.fromJson(dataProductsCached, productListType);
+        }else {
+            List<Product> productList = productRepository.findAll();
 
-        productList.forEach(item -> {
-            ProductDto productDto = new ProductDto();
-            productDto.setId(item.getId());
-            productDto.setName(item.getName());
-            productDto.setPrice(item.getPrice());
-            List<String> images = new ArrayList<>();
-            item.getProductImages().forEach(itemImage -> {
-                images.add("http://localhost:8080/file/" + itemImage.getName());
+            List<ProductDto> productDTOList = new ArrayList<>();
+            productList.forEach(item -> {
+                ProductDto productDto = new ProductDto();
+                productDto.setId(item.getId());
+                productDto.setName(item.getName());
+                productDto.setPrice(item.getPrice());
+                List<String> images = new ArrayList<>();
+                item.getProductImages().forEach(itemImage -> {
+                    images.add("http://localhost:8080/file/" + itemImage.getName());
+                });
+                productDto.setImage(images);
+                productDTOList.add(productDto);
             });
-            productDto.setImage(images);
-            productDtoList.add(productDto);
-        });
+
+            productDtoList.addAll(productDTOList);
+
+            String dataProducts = gson.toJson(productDtoList);
+            redisTemplate.opsForValue().set("products", dataProducts);
+        }
+
         return productDtoList;
     }
 
