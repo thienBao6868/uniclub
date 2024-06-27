@@ -1,8 +1,10 @@
 package com.Thienbao.uniclub.service;
 
+import com.Thienbao.uniclub.dto.OrderDetailDto;
 import com.Thienbao.uniclub.dto.OrderDto;
 import com.Thienbao.uniclub.exception.InsertOrderException;
 import com.Thienbao.uniclub.exception.NotFoundException;
+import com.Thienbao.uniclub.map.OrderDetailMapper;
 import com.Thienbao.uniclub.map.OrderMapper;
 import com.Thienbao.uniclub.model.Cart;
 import com.Thienbao.uniclub.model.OrderDetail;
@@ -40,6 +42,9 @@ public class OrderService implements OrderServiceImp {
 
     @Autowired
     private OrderMapper orderMapper;
+
+    @Autowired
+    private OrderDetailMapper orderDetailMapper;
 
     @Transactional
     @Override
@@ -88,6 +93,16 @@ public class OrderService implements OrderServiceImp {
     public List<OrderDto> getAll() {
         List<Orders> ordersList = orderRepository.findAll();
         return ordersList.stream().map(orderMapper::convertToOrderDto).toList();
+    }
+
+    @Override
+    public List<OrderDetailDto> getAllOrderDetail(int idOrder) {
+        List<OrderDetail> orderDetails = orderDetailRepository.findAllByOrderId(idOrder);
+
+        if (orderDetails.isEmpty()) throw  new NotFoundException("Not found Orders with id order : " + idOrder);
+
+        return orderDetails.stream().map(orderDetailMapper::convertToOrderDetailDto).toList();
+
     };
 
 

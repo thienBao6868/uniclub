@@ -32,6 +32,12 @@ public class OrderController {
 
 
     // Get order Detail
+    @GetMapping("/{idOrder}")
+    public ResponseEntity<?> getDetailOrder(@PathVariable int idOrder){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "get order detail Successful",orderServiceImp.getAllOrderDetail(idOrder));
+        return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+
     // Update Order
     // Delete Order
 

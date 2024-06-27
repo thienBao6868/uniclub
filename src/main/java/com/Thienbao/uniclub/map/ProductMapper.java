@@ -56,4 +56,14 @@ public class ProductMapper {
 
         return detailProductDto;
         }
+
+        public ProductDto convertToProductDto(Product product){
+        ProductDto productDto = new ProductDto();
+        productDto.setId(product.getId());
+        productDto.setName(product.getName());
+        productDto.setPrice(product.getPrice());
+
+        return productDto;
+
+        }
 }
