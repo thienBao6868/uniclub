@@ -17,21 +17,23 @@ public class ProductController {
 
     @Autowired
     private ProductServiceImp productServiceImp;
-    @GetMapping("")
+    @GetMapping("/all")
     public ResponseEntity<?> getAllProduct(){
         return new ResponseEntity<>(productServiceImp.getAll(), HttpStatus.OK);
     }
 
-    // Custom insert Product - Don't
+
     @PostMapping("")
     public ResponseEntity<?> insertProducts(@Valid InsertProductRequest request){
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Insert Product success",productServiceImp.insertProduct(request));
         return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
     // Get Product detail
-    // Custom product detail - Don't
-    @GetMapping("/{idProduct}")
-    public ResponseEntity<?> getDetailProduct(@PathVariable int idProduct){
+    @GetMapping("/detail")
+    public ResponseEntity<?> getDetailProduct(@RequestParam int idProduct){
+
+
+        System.out.println("Kiem tra: " + idProduct);
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get detail Product success", productServiceImp.getDetailProduct(idProduct));
         return new ResponseEntity<>(baseResponse,HttpStatus.OK);
     }
