@@ -1,7 +1,9 @@
 package com.Thienbao.uniclub.service;
 
+import com.Thienbao.uniclub.dto.OrderDto;
 import com.Thienbao.uniclub.exception.InsertOrderException;
 import com.Thienbao.uniclub.exception.NotFoundException;
+import com.Thienbao.uniclub.map.OrderMapper;
 import com.Thienbao.uniclub.model.Cart;
 import com.Thienbao.uniclub.model.OrderDetail;
 import com.Thienbao.uniclub.model.Orders;
@@ -35,6 +37,9 @@ public class OrderService implements OrderServiceImp {
 
     @Autowired
     private JwtHelper jwtHelper;
+
+    @Autowired
+    private OrderMapper orderMapper;
 
     @Transactional
     @Override
@@ -77,7 +82,15 @@ public class OrderService implements OrderServiceImp {
             throw new InsertOrderException("Error insert Order: " + ex.getMessage());
         }
 
+    }
+
+    @Override
+    public List<OrderDto> getAll() {
+        List<Orders> ordersList = orderRepository.findAll();
+        return ordersList.stream().map(orderMapper::convertToOrderDto).toList();
     };
+
+
 
 
 }

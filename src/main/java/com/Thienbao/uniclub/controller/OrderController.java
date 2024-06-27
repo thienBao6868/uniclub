@@ -7,10 +7,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/order")
@@ -27,6 +24,13 @@ public class OrderController {
     }
 
     // Get all order
+    @GetMapping("/all")
+    public ResponseEntity<?> getAllOrder(){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "get all order Successful",orderServiceImp.getAll());
+        return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+
+
     // Get order Detail
     // Update Order
     // Delete Order
