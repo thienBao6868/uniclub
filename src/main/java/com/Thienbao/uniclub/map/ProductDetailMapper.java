@@ -22,14 +22,11 @@ public class ProductDetailMapper {
     public ProductDetailDto convertToProductDetailDto(ProductDetail productDetail, int idProduct){
         ProductDetailDto productDetailDto = new ProductDetailDto();
 
+            productDetailDto.setColor(colorMapper.convertToColorDtoOfGetDetailProduct(productDetail.getColor(),idProduct));
+            productDetailDto.setSize(sizeMapper.convertToSizeDto(productDetail.getSize()));
+            productDetailDto.setQuantity(productDetail.getQuantity());
+            productDetailDto.setPricePlus(productDetail.getPrice());
 
-
-        productDetailDto.setColor(colorMapper.convertToColorDtoOfGetDetailProduct(productDetail.getColor(),idProduct));
-
-
-        productDetailDto.setSize(sizeMapper.convertToSizeDto(productDetail.getSize()));
-        productDetailDto.setQuantity(productDetail.getQuantity());
-        productDetailDto.setPricePlus(productDetail.getPrice());
         return  productDetailDto;
     }
 }

@@ -49,7 +49,6 @@ public class ProductService implements ProductServiceImp {
 
     @Override
     public boolean insertProduct(InsertProductRequest request) {
-
         try {
             // Save [] file
             MultipartFile[] listImageFile = request.getFiles();
@@ -131,6 +130,7 @@ public class ProductService implements ProductServiceImp {
 
         productList.forEach(item -> {
             ProductDto productDto = new ProductDto();
+            productDto.setId(item.getId());
             productDto.setName(item.getName());
             productDto.setPrice(item.getPrice());
             List<String> images = new ArrayList<>();
@@ -146,6 +146,7 @@ public class ProductService implements ProductServiceImp {
     @Override
     public DetailProductDto getDetailProduct(int idProduct) {
         Product product = productRepository.findById(idProduct).orElseThrow(() -> new NotFoundException("Not found product with id :" + idProduct));
+
         return productMapper.convertToDetailProductDto(product);
     }
 

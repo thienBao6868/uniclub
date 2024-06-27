@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class ProductMapper {
@@ -34,6 +35,8 @@ public class ProductMapper {
         productDetailList.forEach(item ->{
             productDetailDtoList.add(productDetailMapper.convertToProductDetailDto(item,product.getId()));
         });
+
+
         detailProductDto.setProductDetailList(productDetailDtoList);
 
         List<CategoryProduct> categoryProductList = product.getCategoryProductList();
