@@ -10,9 +10,7 @@ import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.model.key.CategoryProductID;
 import com.Thienbao.uniclub.model.key.ProductDetailID;
 import com.Thienbao.uniclub.model.key.TagProductID;
-import com.Thienbao.uniclub.payload.request.GetProductByCategoryRequest;
-import com.Thienbao.uniclub.payload.request.GetProductByTagRequest;
-import com.Thienbao.uniclub.payload.request.InsertProductRequest;
+import com.Thienbao.uniclub.payload.request.*;
 import com.Thienbao.uniclub.repository.*;
 import com.Thienbao.uniclub.service.imp.FileServiceImp;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
@@ -235,6 +233,56 @@ public class ProductService implements ProductServiceImp {
             productDTOList.add(productDto);
         });
 
+        return productDTOList;
+    }
+
+    @Override
+    public List<ProductDto> getProductByPrice(GetProductByPriceRequest request) {
+
+        int pageIndex = (request.getPageIndex() != null) ? request.getPageIndex() : 1;
+        int pageSize = (request.getPageSize() != null) ? request.getPageSize() : 9;
+        double lowPrice = (request.getLowPrice() != null)? request.getLowPrice() : 0;
+        double highPrice = (request.getHighPrice() != null) ? request.getHighPrice() : 2000;
+
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+        Page<Product> products = productRepository.findByPriceRange(lowPrice,highPrice,pageable);
+
+        List<ProductDto> productDTOList = new ArrayList<>();
+        products.forEach(item -> {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(item.getId());
+            productDto.setName(item.getName());
+            productDto.setPrice(item.getPrice());
+            List<String> images = new ArrayList<>();
+            item.getProductImages().forEach(itemImage -> {
+                images.add("http://localhost:8080/file/" + itemImage.getName());
+            });
+            productDto.setImage(images);
+            productDTOList.add(productDto);
+        });
+        return productDTOList;
+    }
+
+    @Override
+    public List<ProductDto> getProductByName(GetProductByNameRequest request) {
+        int pageIndex = (request.getPageIndex() != null) ? request.getPageIndex() : 1;
+        int pageSize = (request.getPageSize() != null) ? request.getPageSize() : 9;
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+        Page<Product> products = productRepository.findByName(request.getName(), pageable);
+
+        List<ProductDto> productDTOList = new ArrayList<>();
+        products.forEach(item -> {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(item.getId());
+            productDto.setName(item.getName());
+            productDto.setPrice(item.getPrice());
+            List<String> images = new ArrayList<>();
+            item.getProductImages().forEach(itemImage -> {
+                images.add("http://localhost:8080/file/" + itemImage.getName());
+            });
+            productDto.setImage(images);
+            productDTOList.add(productDto);
+        });
         return productDTOList;
     }
 
