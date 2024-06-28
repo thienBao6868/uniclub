@@ -17,6 +17,10 @@ import com.Thienbao.uniclub.service.imp.ProductServiceImp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -133,7 +137,7 @@ public class ProductService implements ProductServiceImp {
 
 
     @Override
-    public List<ProductDto> getAll() {
+    public List<ProductDto> getAll(int pageIndex, int pageSize) {
         List<ProductDto> productDtoList = new ArrayList<>();
         Gson gson = new Gson();
         if(redisTemplate.hasKey("products")){
@@ -141,7 +145,8 @@ public class ProductService implements ProductServiceImp {
             Type productListType = new TypeToken<ArrayList<ProductDto>>(){}.getType();
             productDtoList = gson.fromJson(dataProductsCached, productListType);
         }else {
-            List<Product> productList = productRepository.findAll();
+            Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+            Page<Product> productList = productRepository.findAll(pageable);
 
             List<ProductDto> productDTOList = new ArrayList<>();
             productList.forEach(item -> {

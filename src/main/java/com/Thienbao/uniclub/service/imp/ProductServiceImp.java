@@ -3,11 +3,12 @@ package com.Thienbao.uniclub.service.imp;
 import com.Thienbao.uniclub.dto.DetailProductDto;
 import com.Thienbao.uniclub.dto.ProductDto;
 import com.Thienbao.uniclub.payload.request.InsertProductRequest;
+import org.springframework.data.domain.Page;
 
 import java.util.List;
 
 public interface ProductServiceImp {
     boolean insertProduct(InsertProductRequest request);
-    List<ProductDto> getAll();
+    List<ProductDto> getAll(int pageIndex, int pageSize);
     DetailProductDto getDetailProduct(int idProduct);
 }

@@ -18,8 +18,8 @@ public class ProductController {
     @Autowired
     private ProductServiceImp productServiceImp;
     @GetMapping("/all")
-    public ResponseEntity<?> getAllProduct(){
-        return new ResponseEntity<>(productServiceImp.getAll(), HttpStatus.OK);
+    public ResponseEntity<?> getAllProduct(@RequestParam(required = false) int pageIndex,@RequestParam(required = false) int pageSize){
+        return new ResponseEntity<>(productServiceImp.getAll(pageIndex,pageSize), HttpStatus.OK);
     }
 
 
@@ -31,9 +31,6 @@ public class ProductController {
     // Get Product detail
     @GetMapping("/detail")
     public ResponseEntity<?> getDetailProduct(@RequestParam int idProduct){
-
-
-        System.out.println("Kiem tra: " + idProduct);
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get detail Product success", productServiceImp.getDetailProduct(idProduct));
         return new ResponseEntity<>(baseResponse,HttpStatus.OK);
     }
