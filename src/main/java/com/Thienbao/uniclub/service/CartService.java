@@ -1,17 +1,22 @@
 package com.Thienbao.uniclub.service;
 
 import com.Thienbao.uniclub.dto.CartDto;
+import com.Thienbao.uniclub.exception.NotFoundException;
+import com.Thienbao.uniclub.exception.UpdateException;
 import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.payload.request.CartRequest;
+import com.Thienbao.uniclub.payload.request.UpdateCartRequest;
 import com.Thienbao.uniclub.repository.CartRepository;
 import com.Thienbao.uniclub.service.imp.CartServiceImp;
 import com.Thienbao.uniclub.utils.JwtHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CartService implements CartServiceImp {
@@ -87,7 +92,48 @@ public class CartService implements CartServiceImp {
         return listCartDto;
     }
 
+    @Transactional
+    @Override
+    public boolean updateCart(HttpServletRequest request, UpdateCartRequest updateCartRequest) {
+        int idUser = jwtHelper.getIdUserFromToken(request);
+        List<UpdateCartRequest.CartItem> cartItems = updateCartRequest.getItems();
+        List<Cart> listCart = cartRepository.findByUserId(idUser);
 
+        try {
+            List<Cart> cartsToUpdate = new ArrayList<>();
+
+            for (UpdateCartRequest.CartItem cartItem : cartItems) {
+                Optional<Cart> cartOptional = listCart.stream()
+                        .filter(item -> item.getId() == cartItem.getIdCart())
+                        .findFirst();
+
+                if (cartOptional.isPresent()) {
+                    Cart cart = cartOptional.get();
+                    cart.setQuantity(cartItem.getQuantity());
+
+                    Color color = new Color();
+                    color.setId(cartItem.getIdColor());
+                    cart.setColor(color);
+
+                    Size size = new Size();
+                    size.setId(cartItem.getIdSize());
+                    cart.setSize(size);
+
+                    cartsToUpdate.add(cart);
+                } else {
+                    throw new NotFoundException("Not found Cart with id : " + cartItem.getIdCart());
+                }
+            }
+
+            cartRepository.saveAll(cartsToUpdate);
+            return true;
+
+        }catch (Exception ex){
+            throw  new UpdateException("Error update cart: " + ex.getMessage());
+
+        }
+
+    }
 
 
 }
