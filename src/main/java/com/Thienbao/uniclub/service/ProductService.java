@@ -11,6 +11,7 @@ import com.Thienbao.uniclub.model.key.CategoryProductID;
 import com.Thienbao.uniclub.model.key.ProductDetailID;
 import com.Thienbao.uniclub.model.key.TagProductID;
 import com.Thienbao.uniclub.payload.request.GetProductByCategoryRequest;
+import com.Thienbao.uniclub.payload.request.GetProductByTagRequest;
 import com.Thienbao.uniclub.payload.request.InsertProductRequest;
 import com.Thienbao.uniclub.repository.*;
 import com.Thienbao.uniclub.service.imp.FileServiceImp;
@@ -56,6 +57,9 @@ public class ProductService implements ProductServiceImp {
 
     @Autowired
     private TagProductRepository tagProductRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
 
     @Autowired
     private ProductMapper productMapper;
@@ -191,6 +195,31 @@ public class ProductService implements ProductServiceImp {
 
         Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
         Page<Product> products = productRepository.findByCategoryId(request.getIdCategory(), pageable);
+
+        List<ProductDto> productDTOList = new ArrayList<>();
+        products.forEach(item -> {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(item.getId());
+            productDto.setName(item.getName());
+            productDto.setPrice(item.getPrice());
+            List<String> images = new ArrayList<>();
+            item.getProductImages().forEach(itemImage -> {
+                images.add("http://localhost:8080/file/" + itemImage.getName());
+            });
+            productDto.setImage(images);
+            productDTOList.add(productDto);
+        });
+
+        return productDTOList;
+    }
+
+    @Override
+    public List<ProductDto> getProductsByTag(GetProductByTagRequest request) {
+        tagRepository.findById(request.getIdTag()).orElseThrow(()-> new NotFoundException("Not found tag with id-Tag"));
+        int pageIndex = (request.getPageIndex() != null) ? request.getPageIndex() : 1;
+        int pageSize = (request.getPageSize() != null) ? request.getPageSize() : 9;
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+        Page<Product> products = productRepository.findByTagId(request.getIdTag(), pageable);
 
         List<ProductDto> productDTOList = new ArrayList<>();
         products.forEach(item -> {

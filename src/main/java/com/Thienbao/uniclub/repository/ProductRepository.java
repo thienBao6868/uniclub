@@ -9,12 +9,11 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
-
-import java.util.List;
-
-
 @Repository
 public interface ProductRepository extends JpaRepository<Product,Integer> {
     @Query("SELECT p FROM product p JOIN category_product cp ON cp.categoryProductID.idProduct = p.id AND cp.categoryProductID.idCategory =:categoryId")
     Page<Product> findByCategoryId(@Param("categoryId") int categoryId, Pageable pageable);
+
+    @Query("SELECT p FROM product p JOIN tag_product tp ON tp.tagProductID.idProduct = p.id AND tp.tagProductID.idTag =:tagId")
+    Page<Product> findByTagId(@Param("tagId") int tagId, Pageable pageable);
 }
