@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.controller;
 
+import com.Thienbao.uniclub.payload.request.GetProductByCategoryRequest;
 import com.Thienbao.uniclub.payload.request.InsertProductRequest;
 import com.Thienbao.uniclub.payload.response.BaseResponse;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
@@ -19,9 +20,16 @@ public class ProductController {
     private ProductServiceImp productServiceImp;
     @GetMapping("/all")
     public ResponseEntity<?> getAllProduct(@RequestParam(required = false) int pageIndex,@RequestParam(required = false) int pageSize){
-        return new ResponseEntity<>(productServiceImp.getAll(pageIndex,pageSize), HttpStatus.OK);
+
+        BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products succesfull", productServiceImp.getAll(pageIndex,pageSize));
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
 
+    @GetMapping("/by-category")
+    public ResponseEntity<?> getProductsByCategory(@Valid @RequestBody  GetProductByCategoryRequest request){
+        BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products by cateory succesfull", productServiceImp.getProductsByCategory(request));
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
 
     @PostMapping("")
     public ResponseEntity<?> insertProducts(@Valid InsertProductRequest request){

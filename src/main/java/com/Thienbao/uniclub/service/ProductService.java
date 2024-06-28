@@ -10,6 +10,7 @@ import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.model.key.CategoryProductID;
 import com.Thienbao.uniclub.model.key.ProductDetailID;
 import com.Thienbao.uniclub.model.key.TagProductID;
+import com.Thienbao.uniclub.payload.request.GetProductByCategoryRequest;
 import com.Thienbao.uniclub.payload.request.InsertProductRequest;
 import com.Thienbao.uniclub.repository.*;
 import com.Thienbao.uniclub.service.imp.FileServiceImp;
@@ -49,6 +50,9 @@ public class ProductService implements ProductServiceImp {
 
     @Autowired
     private CategoryProductRepository categoryProductRepository;
+
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @Autowired
     private TagProductRepository tagProductRepository;
@@ -176,6 +180,33 @@ public class ProductService implements ProductServiceImp {
         Product product = productRepository.findById(idProduct).orElseThrow(() -> new NotFoundException("Not found product with id :" + idProduct));
 
         return productMapper.convertToDetailProductDto(product);
+    }
+
+    @Override
+    public List<ProductDto> getProductsByCategory(GetProductByCategoryRequest request) {
+
+       int pageIndex = (request.getPageIndex() != null) ? request.getPageIndex() : 1;
+       int pageSize = (request.getPageSize() != null) ? request.getPageSize() : 9;
+       categoryRepository.findById(request.getIdCategory()).orElseThrow(()-> new NotFoundException("Not found category with id" + request.getIdCategory()));
+
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+        Page<Product> products = productRepository.findByCategoryId(request.getIdCategory(), pageable);
+
+        List<ProductDto> productDTOList = new ArrayList<>();
+        products.forEach(item -> {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(item.getId());
+            productDto.setName(item.getName());
+            productDto.setPrice(item.getPrice());
+            List<String> images = new ArrayList<>();
+            item.getProductImages().forEach(itemImage -> {
+                images.add("http://localhost:8080/file/" + itemImage.getName());
+            });
+            productDto.setImage(images);
+            productDTOList.add(productDto);
+        });
+
+        return productDTOList;
     }
 
 
