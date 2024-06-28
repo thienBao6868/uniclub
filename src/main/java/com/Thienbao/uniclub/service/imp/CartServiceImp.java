@@ -16,4 +16,6 @@ public interface CartServiceImp {
 
     boolean updateCart(HttpServletRequest request, UpdateCartRequest updateCartRequest);
 
+    boolean deleteCart(HttpServletRequest request, int idCart);
+
 }

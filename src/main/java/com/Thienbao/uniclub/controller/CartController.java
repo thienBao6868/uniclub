@@ -31,9 +31,13 @@ public class CartController {
     // Update cart
     @PutMapping("")
     public ResponseEntity<?> updateToCart(HttpServletRequest request, @RequestBody UpdateCartRequest updateCartRequest ){
-        boolean isSuccess = true;
         BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "update Cart Successful", cartServiceImp.updateCart(request,updateCartRequest));
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
     // Delete Cart
+    @DeleteMapping("/{idCart}")
+    public ResponseEntity<?> deleteCart(HttpServletRequest request, @PathVariable int idCart){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Deleted Cart Successful", cartServiceImp.deleteCart(request,idCart));
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
 }

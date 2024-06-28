@@ -9,4 +9,5 @@ public interface CategoryServiceImp {
 
     List<CategoryDto> getAll();
     boolean insertCategory(InsertCategoryRequest insertCategoryRequest);
+
 }

@@ -1,6 +1,7 @@
 package com.Thienbao.uniclub.service;
 
 import com.Thienbao.uniclub.dto.CartDto;
+import com.Thienbao.uniclub.exception.DeleteException;
 import com.Thienbao.uniclub.exception.NotFoundException;
 import com.Thienbao.uniclub.exception.UpdateException;
 import com.Thienbao.uniclub.model.*;
@@ -130,9 +131,27 @@ public class CartService implements CartServiceImp {
 
         }catch (Exception ex){
             throw  new UpdateException("Error update cart: " + ex.getMessage());
-
         }
 
+    }
+
+    @Override
+    public boolean deleteCart(HttpServletRequest request, int idCart) {
+        int idUser = jwtHelper.getIdUserFromToken(request);
+        List<Cart> listCart = cartRepository.findByUserId(idUser);
+        try{
+            Optional<Cart> cartOptional = listCart.stream().filter(item -> item.getId() == idCart).findFirst();
+            if (cartOptional.isPresent()){
+                Cart cart = cartOptional.get();
+                cartRepository.delete(cart);
+            }else {
+                throw new NotFoundException("Not found cart with id: " + idCart);
+            }
+            return true;
+
+        }catch (Exception ex){
+            throw new DeleteException("Error delete cart : " + ex.getMessage());
+        }
     }
 
 
