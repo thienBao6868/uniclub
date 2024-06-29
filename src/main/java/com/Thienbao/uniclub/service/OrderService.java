@@ -57,7 +57,7 @@ public class OrderService implements OrderServiceImp {
             order.setAddress(orderRequest.getAddress());
             order.setTotal(orderRequest.getTotal());
             order.setCreateDate(LocalDateTime.now());
-            order.setStatus("Pending");
+
             User user = new User();
             user.setId(idUser);
             order.setUser(user);

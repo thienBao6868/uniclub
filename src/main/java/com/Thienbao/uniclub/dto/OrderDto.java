@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.dto;
 
+import com.Thienbao.uniclub.model.STATUS_ORDER;
 import lombok.Data;
 
 import java.time.LocalDateTime;
@@ -11,5 +12,5 @@ public class OrderDto {
     private String phone;
     private double total;
     private LocalDateTime createDate;
-    private String Status;
+    private STATUS_ORDER Status;
 }
