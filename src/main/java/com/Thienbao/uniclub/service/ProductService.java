@@ -113,7 +113,7 @@ public class ProductService implements ProductServiceImp {
             ProductDetail productDetail = new ProductDetail();
             productDetail.setId(productDetailID);
             productDetail.setQuantity(request.getQuantity());
-            productDetail.setPrice(request.getPrice());
+            productDetail.setPrice(request.getPricePlus());
 
             productDetailRepository.save(productDetail);
 
