@@ -6,15 +6,14 @@ import com.Thienbao.uniclub.exception.InsertOrderException;
 import com.Thienbao.uniclub.exception.NotFoundException;
 import com.Thienbao.uniclub.map.OrderDetailMapper;
 import com.Thienbao.uniclub.map.OrderMapper;
-import com.Thienbao.uniclub.model.Cart;
-import com.Thienbao.uniclub.model.OrderDetail;
-import com.Thienbao.uniclub.model.Orders;
-import com.Thienbao.uniclub.model.User;
+import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.model.key.OrderDetailID;
+import com.Thienbao.uniclub.model.key.ProductDetailID;
 import com.Thienbao.uniclub.payload.request.OrderRequest;
 import com.Thienbao.uniclub.repository.CartRepository;
 import com.Thienbao.uniclub.repository.OrderDetailRepository;
 import com.Thienbao.uniclub.repository.OrderRepository;
+import com.Thienbao.uniclub.repository.ProductDetailRepository;
 import com.Thienbao.uniclub.service.imp.OrderServiceImp;
 import com.Thienbao.uniclub.utils.JwtHelper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -36,6 +35,9 @@ public class OrderService implements OrderServiceImp {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private ProductDetailRepository productDetailRepository;
 
     @Autowired
     private JwtHelper jwtHelper;
@@ -77,6 +79,20 @@ public class OrderService implements OrderServiceImp {
                 orderDetail.setPrice(item.getProduct().getPrice());
                 orderDetail.setQuantity(item.getQuantity());
                 orderDetailRepository.save(orderDetail);
+
+
+                // Subtract product quantity
+                ProductDetailID productDetailID = new ProductDetailID();
+                productDetailID.setIdProduct(item.getProduct().getId());
+                productDetailID.setIdColor(item.getColor().getId());
+                productDetailID.setIdSize(item.getSize().getId());
+
+                ProductDetail productDetail = productDetailRepository.findById(productDetailID).orElseThrow(()-> new NotFoundException("Not found Product detail with id"));
+
+                if(item.getQuantity() > productDetail.getQuantity()) throw new InsertOrderException("The number of products ordered cannot be greater than the number of products in stock");
+                int newQuantity = productDetail.getQuantity() - item.getQuantity();
+                productDetail.setQuantity(newQuantity);
+                productDetailRepository.save(productDetail);
 
                 // Delete Data in Cart Database.
                 cartRepository.delete(item);
