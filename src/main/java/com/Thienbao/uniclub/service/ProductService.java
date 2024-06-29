@@ -5,6 +5,7 @@ import com.Thienbao.uniclub.dto.ProductDto;
 import com.Thienbao.uniclub.exception.InsertProductException;
 import com.Thienbao.uniclub.exception.NotFoundException;
 import com.Thienbao.uniclub.exception.SaveFileException;
+import com.Thienbao.uniclub.exception.UpdateException;
 import com.Thienbao.uniclub.map.ProductMapper;
 import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.model.key.CategoryProductID;
@@ -284,6 +285,23 @@ public class ProductService implements ProductServiceImp {
             productDTOList.add(productDto);
         });
         return productDTOList;
+    }
+
+    @Override
+    public boolean updateProduct(UpdateProductRequest updateProductRequest) {
+        Product product = productRepository.findById(updateProductRequest.getIdProduct()).orElseThrow(()-> new NotFoundException("Not found product with id: "+ updateProductRequest.getIdProduct()));
+        try {
+            product.setName(updateProductRequest.getName());
+            product.setPrice(updateProductRequest.getPrice());
+            product.setRate(updateProductRequest.getRate());
+            product.setDesc(updateProductRequest.getDesc());
+            product.setSku(updateProductRequest.getSku());
+            productRepository.save(product);
+            return true;
+        }catch (Exception ex){
+            throw new UpdateException("Error update Product");
+        }
+
     }
 
 

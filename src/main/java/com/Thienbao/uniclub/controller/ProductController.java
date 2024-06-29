@@ -65,8 +65,8 @@ public class ProductController {
 
     // update Product - Don't (update - name, price,description, sku)
     @PutMapping("/update")
-    public ResponseEntity<?> updateProduct(){
-        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "update Product Success", null);
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody UpdateProductRequest updateProductRequest){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "update Product Successful", productServiceImp.updateProduct(updateProductRequest));
         return new ResponseEntity<>(baseResponse,HttpStatus.OK);
     }
 

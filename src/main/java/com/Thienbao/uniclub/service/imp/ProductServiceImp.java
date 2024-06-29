@@ -18,4 +18,6 @@ public interface ProductServiceImp {
     List<ProductDto> getProductByPrice(GetProductByPriceRequest request);
 
     List<ProductDto> getProductByName(GetProductByNameRequest request);
+
+    boolean updateProduct(UpdateProductRequest updateProductRequest);
 }
