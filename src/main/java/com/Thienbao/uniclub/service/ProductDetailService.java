@@ -1,15 +1,13 @@
 package com.Thienbao.uniclub.service;
 
-import com.Thienbao.uniclub.exception.AlreadyExistException;
-import com.Thienbao.uniclub.exception.InsertProductException;
-import com.Thienbao.uniclub.exception.NotFoundException;
-import com.Thienbao.uniclub.exception.SaveFileException;
+import com.Thienbao.uniclub.exception.*;
 import com.Thienbao.uniclub.model.Color;
 import com.Thienbao.uniclub.model.Product;
 import com.Thienbao.uniclub.model.ProductDetail;
 import com.Thienbao.uniclub.model.ProductImage;
 import com.Thienbao.uniclub.model.key.ProductDetailID;
 import com.Thienbao.uniclub.payload.request.InsertProductDetailRequest;
+import com.Thienbao.uniclub.payload.request.UpdateProductDetailRequest;
 import com.Thienbao.uniclub.repository.ProductDetailRepository;
 import com.Thienbao.uniclub.repository.ProductImageRepository;
 import com.Thienbao.uniclub.repository.ProductRepository;
@@ -87,6 +85,32 @@ public class ProductDetailService implements ProductDetailServiceImp {
         }catch (Exception ex){
             throw new InsertProductException(ex.getMessage());
         }
+
+
+    }
+
+    @Override
+    public boolean updateProductDetail(UpdateProductDetailRequest request) {
+
+        try {
+            ProductDetailID productDetailID = new ProductDetailID();
+            productDetailID.setIdProduct(request.getIdProduct());
+            productDetailID.setIdColor(request.getIdColor());
+            productDetailID.setIdSize(request.getIdSize());
+
+            ProductDetail productDetail =productDetailRepository.findById(productDetailID).orElseThrow(()-> new NotFoundException("Not found product detail with id"));
+
+            productDetail.setQuantity(request.getQuantity());
+            productDetail.setPrice(request.getPricePlus());
+
+            productDetailRepository.save(productDetail);
+
+            return true;
+        }catch (Exception ex){
+            throw new UpdateException("Error update product detail: " + ex.getMessage());
+        }
+
+
 
 
     }
