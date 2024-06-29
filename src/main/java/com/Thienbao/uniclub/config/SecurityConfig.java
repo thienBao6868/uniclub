@@ -56,7 +56,7 @@ public class SecurityConfig {
                 .cors(cors ->cors.configurationSource(corsConfigurationSource))
                 .authorizeHttpRequests(author -> {
                     author.requestMatchers(HttpMethod.GET,"/order/**").hasRole("ADMIN");
-                    author.requestMatchers(HttpMethod.POST,"/category","/tag","/size","/color","/product").hasRole("ADMIN");
+                    author.requestMatchers(HttpMethod.POST,"/category","/tag","/size","/color","/product","/product-detail").hasRole("ADMIN");
                     author.requestMatchers(HttpMethod.PUT,"/product/update","/order/update").hasRole("ADMIN");
                     author.requestMatchers("/auth/**","/file/**").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/product/**","/category/all","/tag/all","/color/all","/size/all","/product/detail/**").permitAll();
