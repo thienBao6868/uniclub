@@ -4,12 +4,14 @@ import com.Thienbao.uniclub.dto.OrderDetailDto;
 import com.Thienbao.uniclub.dto.OrderDto;
 import com.Thienbao.uniclub.exception.InsertOrderException;
 import com.Thienbao.uniclub.exception.NotFoundException;
+import com.Thienbao.uniclub.exception.UpdateException;
 import com.Thienbao.uniclub.map.OrderDetailMapper;
 import com.Thienbao.uniclub.map.OrderMapper;
 import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.model.key.OrderDetailID;
 import com.Thienbao.uniclub.model.key.ProductDetailID;
 import com.Thienbao.uniclub.payload.request.OrderRequest;
+import com.Thienbao.uniclub.payload.request.UpdateOrderRequest;
 import com.Thienbao.uniclub.repository.CartRepository;
 import com.Thienbao.uniclub.repository.OrderDetailRepository;
 import com.Thienbao.uniclub.repository.OrderRepository;
@@ -119,6 +121,18 @@ public class OrderService implements OrderServiceImp {
 
         return orderDetails.stream().map(orderDetailMapper::convertToOrderDetailDto).toList();
 
+    }
+
+    @Override
+    public boolean updateOrder(UpdateOrderRequest updateOrderRequest) {
+        Orders order = orderRepository.findById(updateOrderRequest.getIdOrder()).orElseThrow(()-> new NotFoundException("Not found order with order Id: " + updateOrderRequest.getIdOrder()));
+        try {
+            order.setStatus(updateOrderRequest.getStatus());
+            orderRepository.save(order);
+            return true;
+        }catch (Exception ex){
+            throw  new UpdateException("Error update order : " + ex.getMessage());
+        }
     };
 
 

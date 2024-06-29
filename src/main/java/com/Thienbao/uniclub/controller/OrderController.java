@@ -1,9 +1,12 @@
 package com.Thienbao.uniclub.controller;
 
 import com.Thienbao.uniclub.payload.request.OrderRequest;
+import com.Thienbao.uniclub.payload.request.UpdateOrderRequest;
+import com.Thienbao.uniclub.payload.request.UpdateProductRequest;
 import com.Thienbao.uniclub.payload.response.BaseResponse;
 import com.Thienbao.uniclub.service.imp.OrderServiceImp;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -39,6 +42,11 @@ public class OrderController {
     }
 
     // Update Order
+    @PutMapping("/update")
+    public ResponseEntity<?> updateOrder(@Valid @RequestBody UpdateOrderRequest updateOrderRequest){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "update order Successful",orderServiceImp.updateOrder(updateOrderRequest));
+        return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
 
     // Delete Order
 
