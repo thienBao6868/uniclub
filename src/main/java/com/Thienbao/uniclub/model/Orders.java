@@ -22,6 +22,7 @@ public class Orders {
     @Column(name = "total")
     private double total;
 
+    @Enumerated(EnumType.STRING)
     @Column(name = "status",nullable = false)
     private STATUS_ORDER status;
 
