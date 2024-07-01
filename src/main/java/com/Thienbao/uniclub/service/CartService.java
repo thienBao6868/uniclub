@@ -7,6 +7,7 @@ import com.Thienbao.uniclub.exception.UpdateException;
 import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.payload.request.CartRequest;
 import com.Thienbao.uniclub.payload.request.UpdateCartRequest;
+import com.Thienbao.uniclub.payload.request.UpdateQuantityOfCartRequest;
 import com.Thienbao.uniclub.repository.CartRepository;
 import com.Thienbao.uniclub.repository.ProductImageRepository;
 import com.Thienbao.uniclub.service.imp.CartServiceImp;
@@ -139,6 +140,28 @@ public class CartService implements CartServiceImp {
             throw  new UpdateException("Error update cart: " + ex.getMessage());
         }
 
+    }
+
+    @Override
+    public boolean updateQuantityOfCart(HttpServletRequest request, UpdateQuantityOfCartRequest updateQuantityOfCartRequest) {
+        int idUser = jwtHelper.getIdUserFromToken(request);
+        List<Cart> listCart = cartRepository.findByUserId(idUser);
+
+        try {
+            Cart cart = cartRepository.findById(updateQuantityOfCartRequest.getIdCart()).orElseThrow(()-> new NotFoundException("Not found cart with id : " + updateQuantityOfCartRequest.getIdCart()));
+            Optional<Cart> cartOptional = listCart.stream()
+                    .filter(item -> item.getId() == cart.getId())
+                    .findFirst();
+            if(cartOptional.isPresent()){
+                cart.setQuantity(updateQuantityOfCartRequest.getQuantity());
+                cartRepository.save(cart);
+            }else {
+                throw  new NotFoundException("Not found cart of current user");
+            }
+            return  true;
+        }catch (Exception ex){
+            throw new UpdateException("Error update Cart " + ex.getMessage());
+        }
     }
 
     @Override
