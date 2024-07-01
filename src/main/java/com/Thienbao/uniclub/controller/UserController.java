@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     // get all user By Admin
+
     // Get user Detail
+
     // Update User (isDeleted = true)
 }

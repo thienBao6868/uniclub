@@ -10,5 +10,5 @@ import java.util.List;
 
 @Repository
 public interface ProductImageRepository extends JpaRepository<ProductImage, Integer> {
-    ProductImage findByProductAndColor(Product product, Color color);
+    List<ProductImage> findByProductAndColor(Product product, Color color);
 }

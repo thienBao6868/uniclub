@@ -8,6 +8,7 @@ import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.payload.request.CartRequest;
 import com.Thienbao.uniclub.payload.request.UpdateCartRequest;
 import com.Thienbao.uniclub.repository.CartRepository;
+import com.Thienbao.uniclub.repository.ProductImageRepository;
 import com.Thienbao.uniclub.service.imp.CartServiceImp;
 import com.Thienbao.uniclub.utils.JwtHelper;
 import jakarta.servlet.http.HttpServletRequest;
@@ -27,6 +28,10 @@ public class CartService implements CartServiceImp {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private ProductImageRepository productImageRepository;
+
     @Override
     public boolean insertCart(HttpServletRequest request, CartRequest cartRequest) {
         try{
@@ -80,7 +85,8 @@ public class CartService implements CartServiceImp {
             cartDto.setIdColor(item.getColor().getId());
             cartDto.setPrice(item.getProduct().getPrice());
             cartDto.setQuantity(item.getQuantity());
-            List<ProductImage> productImageList = item.getProduct().getProductImages();
+            List<ProductImage> productImageList = productImageRepository.findByProductAndColor(item.getProduct(),item.getColor());
+
             List<String> images = new ArrayList<>();
             productImageList.forEach(image->{
                 images.add("http://localhost:8080/file/"+image.getName());

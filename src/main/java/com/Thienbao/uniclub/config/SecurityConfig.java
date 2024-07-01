@@ -60,6 +60,7 @@ public class SecurityConfig {
                     author.requestMatchers(HttpMethod.PUT,"/product/update","/order/update","/product-detail").hasRole("ADMIN");
                     author.requestMatchers("/auth/**","/file/**").permitAll();
                     author.requestMatchers(HttpMethod.GET,"/product/**","/category/all","/tag/all","/color/all","/size/all","/product/detail/**").permitAll();
+                    author.requestMatchers(HttpMethod.POST,"/product/**").permitAll();
                     author.anyRequest().authenticated();
                 })
                 .addFilterBefore(customFilterSecurity, UsernamePasswordAuthenticationFilter.class)

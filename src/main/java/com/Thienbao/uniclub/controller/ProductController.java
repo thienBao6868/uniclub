@@ -23,25 +23,25 @@ public class ProductController {
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/by-category")
+    @PostMapping("/by-category")
     public ResponseEntity<?> getProductsByCategory(@Valid @RequestBody  GetProductByCategoryRequest request){
         BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products by category successful", productServiceImp.getProductsByCategory(request));
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/by-tag")
+    @PostMapping("/by-tag")
     public ResponseEntity<?> getProductsByTag(@Valid @RequestBody GetProductByTagRequest request){
         BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products by tag successful", productServiceImp.getProductsByTag(request));
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/by-price")
+    @PostMapping("/by-price")
     public ResponseEntity<?> getProductsByPrice(@Valid @RequestBody GetProductByPriceRequest request){
         BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products by price successful", productServiceImp.getProductByPrice(request));
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
 
-    @GetMapping("/by-name")
+    @PostMapping("/by-name")
     public ResponseEntity<?> getProductsByName(@Valid @RequestBody GetProductByNameRequest request){
         BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products by price successful", productServiceImp.getProductByName(request));
         return new ResponseEntity<>(baseResponse, HttpStatus.OK);

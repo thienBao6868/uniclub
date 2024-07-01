@@ -146,12 +146,12 @@ public class ProductService implements ProductServiceImp {
     @Override
     public List<ProductDto> getAll(int pageIndex, int pageSize) {
         List<ProductDto> productDtoList = new ArrayList<>();
-        Gson gson = new Gson();
-        if(redisTemplate.hasKey("products")){
-            String dataProductsCached = (Objects.requireNonNull(redisTemplate.opsForValue().get("products"))).toString();
-            Type productListType = new TypeToken<ArrayList<ProductDto>>(){}.getType();
-            productDtoList = gson.fromJson(dataProductsCached, productListType);
-        }else {
+//        Gson gson = new Gson();
+//        if(redisTemplate.hasKey("products")){
+//            String dataProductsCached = (Objects.requireNonNull(redisTemplate.opsForValue().get("products"))).toString();
+//            Type productListType = new TypeToken<ArrayList<ProductDto>>(){}.getType();
+//            productDtoList = gson.fromJson(dataProductsCached, productListType);
+//        }else {
             Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
             Page<Product> productList = productRepository.findAll(pageable);
 
@@ -171,9 +171,9 @@ public class ProductService implements ProductServiceImp {
 
             productDtoList.addAll(productDTOList);
 
-            String dataProducts = gson.toJson(productDtoList);
-            redisTemplate.opsForValue().set("products", dataProducts);
-        }
+//            String dataProducts = gson.toJson(productDtoList);
+//            redisTemplate.opsForValue().set("products", dataProducts);
+//        }
 
         return productDtoList;
     }
