@@ -19,19 +19,19 @@ Nhìn chung, Uniclub shop là một bước tiến mang đến sự tiện lợi
 ### Các công nghệ dùng để phát triển dự án:
 
 #### FE:
-
-- Ngôn ngữ :  HTML, CSS, JavaScript
-- Frameworks : jQuery
-- ajax (fetch API )
+- HTML, CSS.
+- Ngôn ngữ :JavaScript
+- BootStrap, jQuery , Ajax (fetch API )
 
 #### BE
 
 - Ngôn ngữ : Java
-- Framworks : Spring Boot, Spring security, spring data (JPA)
+- Framworks : Spring Boot
+- Spring security,JWT, spring data (JPA)
 - Cơ sở dữ liệu SQL: MySQL
-- cơ sở dữ liệu NoSQL: redis
+- cơ sở dữ liệu NoSQL: Redis
 - API : Restful API
-- Quản lý bảo mật JWT.
+
 
 ### Các Tính Năng trong dự án
 
