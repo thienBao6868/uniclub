@@ -1,5 +1,6 @@
 package com.Thienbao.uniclub.repository;
 
+import com.Thienbao.uniclub.model.Product;
 import com.Thienbao.uniclub.model.ProductDetail;
 
 import com.Thienbao.uniclub.model.key.ProductDetailID;

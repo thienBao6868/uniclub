@@ -1,6 +1,6 @@
 package com.Thienbao.uniclub.controller;
 
-import com.Thienbao.uniclub.payload.request.InsertProductRequest;
+import com.Thienbao.uniclub.payload.request.*;
 import com.Thienbao.uniclub.payload.response.BaseResponse;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
 import jakarta.validation.Valid;
@@ -18,8 +18,40 @@ public class ProductController {
     @Autowired
     private ProductServiceImp productServiceImp;
     @GetMapping("/all")
-    public ResponseEntity<?> getAllProduct(){
-        return new ResponseEntity<>(productServiceImp.getAll(), HttpStatus.OK);
+    public ResponseEntity<?> getAllProduct(@RequestParam(required = false) int pageIndex,@RequestParam(required = false) int pageSize){
+        BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products successful", productServiceImp.getAll(pageIndex,pageSize));
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/by-category")
+    public ResponseEntity<?> getProductsByCategory(@Valid @RequestBody  GetProductByCategoryRequest request){
+        BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products by category successful", productServiceImp.getProductsByCategory(request));
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/by-tag")
+    public ResponseEntity<?> getProductsByTag(@Valid @RequestBody GetProductByTagRequest request){
+        BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products by tag successful", productServiceImp.getProductsByTag(request));
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/by-price")
+    public ResponseEntity<?> getProductsByPrice(@Valid @RequestBody GetProductByPriceRequest request){
+        BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products by price successful", productServiceImp.getProductByPrice(request));
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+
+    @PostMapping("/by-name")
+    public ResponseEntity<?> getProductsByName(@Valid @RequestBody GetProductByNameRequest request){
+        BaseResponse  baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get Products by price successful", productServiceImp.getProductByName(request));
+        return new ResponseEntity<>(baseResponse, HttpStatus.OK);
+    }
+
+
+    @GetMapping("/detail")
+    public ResponseEntity<?> getDetailProduct(@RequestParam int idProduct){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get detail Product success", productServiceImp.getDetailProduct(idProduct));
+        return new ResponseEntity<>(baseResponse,HttpStatus.OK);
     }
 
 
@@ -29,19 +61,12 @@ public class ProductController {
         return  new ResponseEntity<>(baseResponse, HttpStatus.OK);
     }
     // Get Product detail
-    @GetMapping("/detail")
-    public ResponseEntity<?> getDetailProduct(@RequestParam int idProduct){
 
 
-        System.out.println("Kiem tra: " + idProduct);
-        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "Get detail Product success", productServiceImp.getDetailProduct(idProduct));
-        return new ResponseEntity<>(baseResponse,HttpStatus.OK);
-    }
-
-    // update Product - Don't (update - name, price,description, sku)
+    // update Product
     @PutMapping("/update")
-    public ResponseEntity<?> updateProduct(){
-        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "update Product Success", null);
+    public ResponseEntity<?> updateProduct(@Valid @RequestBody UpdateProductRequest updateProductRequest){
+        BaseResponse baseResponse = new BaseResponse(HttpStatus.OK.value(), "update Product Successful", productServiceImp.updateProduct(updateProductRequest));
         return new ResponseEntity<>(baseResponse,HttpStatus.OK);
     }
 

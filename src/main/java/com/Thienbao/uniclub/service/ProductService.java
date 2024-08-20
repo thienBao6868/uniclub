@@ -5,18 +5,23 @@ import com.Thienbao.uniclub.dto.ProductDto;
 import com.Thienbao.uniclub.exception.InsertProductException;
 import com.Thienbao.uniclub.exception.NotFoundException;
 import com.Thienbao.uniclub.exception.SaveFileException;
+import com.Thienbao.uniclub.exception.UpdateException;
 import com.Thienbao.uniclub.map.ProductMapper;
 import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.model.key.CategoryProductID;
 import com.Thienbao.uniclub.model.key.ProductDetailID;
 import com.Thienbao.uniclub.model.key.TagProductID;
-import com.Thienbao.uniclub.payload.request.InsertProductRequest;
+import com.Thienbao.uniclub.payload.request.*;
 import com.Thienbao.uniclub.repository.*;
 import com.Thienbao.uniclub.service.imp.FileServiceImp;
 import com.Thienbao.uniclub.service.imp.ProductServiceImp;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -47,7 +52,13 @@ public class ProductService implements ProductServiceImp {
     private CategoryProductRepository categoryProductRepository;
 
     @Autowired
+    private CategoryRepository categoryRepository;
+
+    @Autowired
     private TagProductRepository tagProductRepository;
+
+    @Autowired
+    private TagRepository tagRepository;
 
     @Autowired
     private ProductMapper productMapper;
@@ -102,7 +113,7 @@ public class ProductService implements ProductServiceImp {
             ProductDetail productDetail = new ProductDetail();
             productDetail.setId(productDetailID);
             productDetail.setQuantity(request.getQuantity());
-            productDetail.setPrice(request.getPrice());
+            productDetail.setPrice(request.getPricePlus());
 
             productDetailRepository.save(productDetail);
 
@@ -133,15 +144,16 @@ public class ProductService implements ProductServiceImp {
 
 
     @Override
-    public List<ProductDto> getAll() {
+    public List<ProductDto> getAll(int pageIndex, int pageSize) {
         List<ProductDto> productDtoList = new ArrayList<>();
-        Gson gson = new Gson();
-        if(redisTemplate.hasKey("products")){
-            String dataProductsCached = (Objects.requireNonNull(redisTemplate.opsForValue().get("products"))).toString();
-            Type productListType = new TypeToken<ArrayList<ProductDto>>(){}.getType();
-            productDtoList = gson.fromJson(dataProductsCached, productListType);
-        }else {
-            List<Product> productList = productRepository.findAll();
+//        Gson gson = new Gson();
+//        if(redisTemplate.hasKey("products")){
+//            String dataProductsCached = (Objects.requireNonNull(redisTemplate.opsForValue().get("products"))).toString();
+//            Type productListType = new TypeToken<ArrayList<ProductDto>>(){}.getType();
+//            productDtoList = gson.fromJson(dataProductsCached, productListType);
+//        }else {
+            Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+            Page<Product> productList = productRepository.findAll(pageable);
 
             List<ProductDto> productDTOList = new ArrayList<>();
             productList.forEach(item -> {
@@ -159,9 +171,9 @@ public class ProductService implements ProductServiceImp {
 
             productDtoList.addAll(productDTOList);
 
-            String dataProducts = gson.toJson(productDtoList);
-            redisTemplate.opsForValue().set("products", dataProducts);
-        }
+//            String dataProducts = gson.toJson(productDtoList);
+//            redisTemplate.opsForValue().set("products", dataProducts);
+//        }
 
         return productDtoList;
     }
@@ -171,6 +183,125 @@ public class ProductService implements ProductServiceImp {
         Product product = productRepository.findById(idProduct).orElseThrow(() -> new NotFoundException("Not found product with id :" + idProduct));
 
         return productMapper.convertToDetailProductDto(product);
+    }
+
+    @Override
+    public List<ProductDto> getProductsByCategory(GetProductByCategoryRequest request) {
+
+       int pageIndex = (request.getPageIndex() != null) ? request.getPageIndex() : 1;
+       int pageSize = (request.getPageSize() != null) ? request.getPageSize() : 9;
+       categoryRepository.findById(request.getIdCategory()).orElseThrow(()-> new NotFoundException("Not found category with id" + request.getIdCategory()));
+
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+        Page<Product> products = productRepository.findByCategoryId(request.getIdCategory(), pageable);
+
+        List<ProductDto> productDTOList = new ArrayList<>();
+        products.forEach(item -> {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(item.getId());
+            productDto.setName(item.getName());
+            productDto.setPrice(item.getPrice());
+            List<String> images = new ArrayList<>();
+            item.getProductImages().forEach(itemImage -> {
+                images.add("http://localhost:8080/file/" + itemImage.getName());
+            });
+            productDto.setImage(images);
+            productDTOList.add(productDto);
+        });
+
+        return productDTOList;
+    }
+
+    @Override
+    public List<ProductDto> getProductsByTag(GetProductByTagRequest request) {
+        tagRepository.findById(request.getIdTag()).orElseThrow(()-> new NotFoundException("Not found tag with id-Tag"));
+        int pageIndex = (request.getPageIndex() != null) ? request.getPageIndex() : 1;
+        int pageSize = (request.getPageSize() != null) ? request.getPageSize() : 9;
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+        Page<Product> products = productRepository.findByTagId(request.getIdTag(), pageable);
+
+        List<ProductDto> productDTOList = new ArrayList<>();
+        products.forEach(item -> {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(item.getId());
+            productDto.setName(item.getName());
+            productDto.setPrice(item.getPrice());
+            List<String> images = new ArrayList<>();
+            item.getProductImages().forEach(itemImage -> {
+                images.add("http://localhost:8080/file/" + itemImage.getName());
+            });
+            productDto.setImage(images);
+            productDTOList.add(productDto);
+        });
+
+        return productDTOList;
+    }
+
+    @Override
+    public List<ProductDto> getProductByPrice(GetProductByPriceRequest request) {
+
+        int pageIndex = (request.getPageIndex() != null) ? request.getPageIndex() : 1;
+        int pageSize = (request.getPageSize() != null) ? request.getPageSize() : 9;
+        double lowPrice = (request.getLowPrice() != null)? request.getLowPrice() : 0;
+        double highPrice = (request.getHighPrice() != null) ? request.getHighPrice() : 2000;
+
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+        Page<Product> products = productRepository.findByPriceRange(lowPrice,highPrice,pageable);
+
+        List<ProductDto> productDTOList = new ArrayList<>();
+        products.forEach(item -> {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(item.getId());
+            productDto.setName(item.getName());
+            productDto.setPrice(item.getPrice());
+            List<String> images = new ArrayList<>();
+            item.getProductImages().forEach(itemImage -> {
+                images.add("http://localhost:8080/file/" + itemImage.getName());
+            });
+            productDto.setImage(images);
+            productDTOList.add(productDto);
+        });
+        return productDTOList;
+    }
+
+    @Override
+    public List<ProductDto> getProductByName(GetProductByNameRequest request) {
+        int pageIndex = (request.getPageIndex() != null) ? request.getPageIndex() : 1;
+        int pageSize = (request.getPageSize() != null) ? request.getPageSize() : 9;
+        Pageable pageable = PageRequest.of(pageIndex-1,pageSize);
+        Page<Product> products = productRepository.findByName(request.getName(), pageable);
+
+        List<ProductDto> productDTOList = new ArrayList<>();
+        products.forEach(item -> {
+            ProductDto productDto = new ProductDto();
+            productDto.setId(item.getId());
+            productDto.setName(item.getName());
+            productDto.setPrice(item.getPrice());
+            List<String> images = new ArrayList<>();
+            item.getProductImages().forEach(itemImage -> {
+                images.add("http://localhost:8080/file/" + itemImage.getName());
+            });
+            productDto.setImage(images);
+            productDTOList.add(productDto);
+        });
+        return productDTOList;
+    }
+
+    @Override
+    public boolean updateProduct(UpdateProductRequest updateProductRequest) {
+        Product product = productRepository.findById(updateProductRequest.getIdProduct()).orElseThrow(()-> new NotFoundException("Not found product with id: "+ updateProductRequest.getIdProduct()));
+        try {
+            product.setName(updateProductRequest.getName());
+            product.setPrice(updateProductRequest.getPrice());
+            product.setRate(updateProductRequest.getRate());
+            product.setDesc(updateProductRequest.getDesc());
+            product.setSku(updateProductRequest.getSku());
+            productRepository.save(product);
+            return true;
+        }catch (Exception ex){
+            throw new UpdateException("Error update Product");
+        }
+
     }
 
 

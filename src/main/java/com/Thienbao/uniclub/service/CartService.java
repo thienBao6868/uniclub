@@ -1,17 +1,25 @@
 package com.Thienbao.uniclub.service;
 
 import com.Thienbao.uniclub.dto.CartDto;
+import com.Thienbao.uniclub.exception.DeleteException;
+import com.Thienbao.uniclub.exception.NotFoundException;
+import com.Thienbao.uniclub.exception.UpdateException;
 import com.Thienbao.uniclub.model.*;
 import com.Thienbao.uniclub.payload.request.CartRequest;
+import com.Thienbao.uniclub.payload.request.UpdateCartRequest;
+import com.Thienbao.uniclub.payload.request.UpdateQuantityOfCartRequest;
 import com.Thienbao.uniclub.repository.CartRepository;
+import com.Thienbao.uniclub.repository.ProductImageRepository;
 import com.Thienbao.uniclub.service.imp.CartServiceImp;
 import com.Thienbao.uniclub.utils.JwtHelper;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CartService implements CartServiceImp {
@@ -21,6 +29,10 @@ public class CartService implements CartServiceImp {
 
     @Autowired
     private CartRepository cartRepository;
+
+    @Autowired
+    private ProductImageRepository productImageRepository;
+
     @Override
     public boolean insertCart(HttpServletRequest request, CartRequest cartRequest) {
         try{
@@ -74,7 +86,8 @@ public class CartService implements CartServiceImp {
             cartDto.setIdColor(item.getColor().getId());
             cartDto.setPrice(item.getProduct().getPrice());
             cartDto.setQuantity(item.getQuantity());
-            List<ProductImage> productImageList = item.getProduct().getProductImages();
+            List<ProductImage> productImageList = productImageRepository.findByProductAndColor(item.getProduct(),item.getColor());
+
             List<String> images = new ArrayList<>();
             productImageList.forEach(image->{
                 images.add("http://localhost:8080/file/"+image.getName());
@@ -87,7 +100,88 @@ public class CartService implements CartServiceImp {
         return listCartDto;
     }
 
+    @Transactional
+    @Override
+    public boolean updateCart(HttpServletRequest request, UpdateCartRequest updateCartRequest) {
+        int idUser = jwtHelper.getIdUserFromToken(request);
+        List<UpdateCartRequest.CartItem> cartItems = updateCartRequest.getItems();
+        List<Cart> listCart = cartRepository.findByUserId(idUser);
 
+        try {
+            List<Cart> cartsToUpdate = new ArrayList<>();
+
+            for (UpdateCartRequest.CartItem cartItem : cartItems) {
+                Optional<Cart> cartOptional = listCart.stream()
+                        .filter(item -> item.getId() == cartItem.getIdCart())
+                        .findFirst();
+
+                if (cartOptional.isPresent()) {
+                    Cart cart = cartOptional.get();
+                    cart.setQuantity(cartItem.getQuantity());
+
+                    Color color = new Color();
+                    color.setId(cartItem.getIdColor());
+                    cart.setColor(color);
+
+                    Size size = new Size();
+                    size.setId(cartItem.getIdSize());
+                    cart.setSize(size);
+
+                    cartsToUpdate.add(cart);
+                } else {
+                    throw new NotFoundException("Not found Cart with id : " + cartItem.getIdCart());
+                }
+            }
+
+            cartRepository.saveAll(cartsToUpdate);
+            return true;
+
+        }catch (Exception ex){
+            throw  new UpdateException("Error update cart: " + ex.getMessage());
+        }
+
+    }
+
+    @Override
+    public boolean updateQuantityOfCart(HttpServletRequest request, UpdateQuantityOfCartRequest updateQuantityOfCartRequest) {
+        int idUser = jwtHelper.getIdUserFromToken(request);
+        List<Cart> listCart = cartRepository.findByUserId(idUser);
+
+        try {
+            Cart cart = cartRepository.findById(updateQuantityOfCartRequest.getIdCart()).orElseThrow(()-> new NotFoundException("Not found cart with id : " + updateQuantityOfCartRequest.getIdCart()));
+            Optional<Cart> cartOptional = listCart.stream()
+                    .filter(item -> item.getId() == cart.getId())
+                    .findFirst();
+            if(cartOptional.isPresent()){
+                cart.setQuantity(updateQuantityOfCartRequest.getQuantity());
+                cartRepository.save(cart);
+            }else {
+                throw  new NotFoundException("Not found cart of current user");
+            }
+            return  true;
+        }catch (Exception ex){
+            throw new UpdateException("Error update Cart " + ex.getMessage());
+        }
+    }
+
+    @Override
+    public boolean deleteCart(HttpServletRequest request, int idCart) {
+        int idUser = jwtHelper.getIdUserFromToken(request);
+        List<Cart> listCart = cartRepository.findByUserId(idUser);
+        try{
+            Optional<Cart> cartOptional = listCart.stream().filter(item -> item.getId() == idCart).findFirst();
+            if (cartOptional.isPresent()){
+                Cart cart = cartOptional.get();
+                cartRepository.delete(cart);
+            }else {
+                throw new NotFoundException("Not found cart with id: " + idCart);
+            }
+            return true;
+
+        }catch (Exception ex){
+            throw new DeleteException("Error delete cart : " + ex.getMessage());
+        }
+    }
 
 
 }

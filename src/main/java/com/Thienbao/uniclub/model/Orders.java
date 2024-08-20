@@ -22,8 +22,9 @@ public class Orders {
     @Column(name = "total")
     private double total;
 
-    @Column(name = "status")
-    private String status;
+    @Enumerated(EnumType.STRING)
+    @Column(name = "status",nullable = false)
+    private STATUS_ORDER status;
 
     @Column(name = "create_date",columnDefinition = "TIMESTAMP DEFAULT CURRENT_TIMESTAMP")
     private LocalDateTime createDate;
@@ -35,4 +36,10 @@ public class Orders {
     @OneToMany(mappedBy = "order")
     private List<OrderDetail> orderDetailList;
 
+    @PrePersist
+    protected void onCreate(){
+        if (status == null){
+            status = STATUS_ORDER.PENDING;
+        }
+    }
 }
